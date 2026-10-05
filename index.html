@@ -1,0 +1,1168 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>沒有晶片的一天</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔌</text></svg>">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap">
+<style>
+  :root{
+    --bg1:#241a33; --bg2:#3d2b45; --accent:#ffb35c; --accent-soft:rgba(255,179,92,.18);
+    --card:rgba(255,255,255,.09); --text:#f6f1ea; --muted:rgba(246,241,234,.62); --line:rgba(255,255,255,.14);
+    --safe:#6fdca0;
+    --u:10px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    min-height:100vh; min-height:100dvh;
+    font-family:"Noto Sans TC","Microsoft JhengHei","PingFang TC",-apple-system,"Segoe UI",sans-serif;
+    color:var(--text);
+    background:linear-gradient(165deg,var(--bg1),var(--bg2));
+    transition:background .8s ease;
+    padding:0 clamp(16px,3vw,40px) 48px;
+    -webkit-font-smoothing:antialiased;
+    touch-action:manipulation;            /* 平板：關掉雙擊縮放延遲 */
+    -webkit-text-size-adjust:100%;
+  }
+  body[data-scene="0"]{--bg1:#2b1d3a;--bg2:#6b4436;--accent:#ffb35c;--accent-soft:rgba(255,179,92,.18)}
+  body[data-scene="1"]{--bg1:#101f36;--bg2:#1e4e63;--accent:#6fd3ff;--accent-soft:rgba(111,211,255,.18)}
+  body[data-scene="2"]{--bg1:#2a2416;--bg2:#4f4326;--accent:#ffd166;--accent-soft:rgba(255,209,102,.18)}
+  body[data-scene="3"]{--bg1:#161231;--bg2:#38254f;--accent:#c49bff;--accent-soft:rgba(196,155,255,.18)}
+
+  .wrap{max-width:1400px;margin:0 auto}
+
+  header{padding:clamp(12px,2vh,22px) 0 4px;display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;justify-content:space-between}
+  h1{margin:0;font-size:clamp(20px,2.8vw,34px);letter-spacing:.06em;font-weight:900}
+  h1 small{display:block;font-size:clamp(12px,1.2vw,15px);font-weight:400;color:var(--muted);letter-spacing:.1em;margin-top:5px}
+  .tools{display:flex;gap:8px}
+  .tools button{
+    background:transparent;border:1px solid var(--line);color:var(--muted);
+    font:inherit;font-size:clamp(13px,1.2vw,15px);padding:9px 16px;border-radius:999px;cursor:pointer;transition:.18s;
+    min-height:40px;
+  }
+  .tools button:hover,.tools button:active{border-color:var(--accent);color:var(--accent)}
+  .tools button.on{background:var(--accent);border-color:var(--accent);color:#1c1526;font-weight:700}
+
+  nav{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 10px}
+  nav button{
+    background:var(--card);border:1px solid transparent;color:var(--muted);
+    font:inherit;font-size:clamp(13px,1.2vw,16px);padding:10px 16px;border-radius:14px;cursor:pointer;transition:.18s;
+    display:flex;align-items:center;gap:8px;min-height:44px;
+  }
+  nav button .dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.25)}
+  nav button.done .dot{background:var(--safe)}
+  nav button.active{background:var(--accent);color:#1c1526;font-weight:700;border-color:var(--accent)}
+  nav button.active .dot{background:rgba(28,21,38,.45)}
+
+  .status{display:flex;align-items:center;gap:14px;margin-bottom:12px;flex-wrap:wrap}
+  .bar{flex:1;min-width:160px;height:10px;border-radius:999px;background:rgba(0,0,0,.28);overflow:hidden}
+  .bar i{display:block;height:100%;width:0;background:var(--accent);border-radius:999px;transition:width .45s cubic-bezier(.3,1.2,.5,1)}
+  .status b{font-size:clamp(14px,1.5vw,19px);font-weight:700}
+  .status span{color:var(--muted);font-size:clamp(13px,1.2vw,16px)}
+
+  /* ── 場景圖：寬度優先，高度自動，平板橫直向都不會變形 ── */
+  .stage{
+    position:relative;
+    width:min(100%, calc(58vh * 16 / 9));
+    aspect-ratio:16/9;margin:0 auto;
+    border-radius:20px;overflow:hidden;box-shadow:0 22px 60px rgba(0,0,0,.45);
+    border:1px solid rgba(255,255,255,.1);
+  }
+  .stage svg.art{position:absolute;inset:0;width:100%;height:100%;display:block}
+  .art .broken{opacity:.22;filter:grayscale(1);transition:opacity .55s,filter .55s}
+  .art .ruler{opacity:.4}
+
+  .hot{
+    position:absolute;background:transparent;border:0;padding:0;font:inherit;color:inherit;cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .hot:focus-visible{outline:3px solid var(--accent);outline-offset:3px;border-radius:10px}
+  .hot .tag{
+    position:absolute;left:50%;bottom:100%;transform:translate(-50%,-6px);
+    background:#1b1526;color:#fff;border:1px solid var(--accent);border-radius:999px;
+    padding:3px 10px;font-size:clamp(11px,1.1vw,14px);font-weight:700;
+    white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .15s;z-index:3;
+  }
+  .hot:focus-visible .tag{opacity:1}
+  @media (hover:hover){ .hot:hover .tag{opacity:1} .hot.icon:hover .e{transform:scale(1.16)} .hot.zone:hover{border-color:var(--accent);background:rgba(255,255,255,.12)} }
+  .hot.settled .tag{display:none}
+
+  .hot.icon{transform:translate(-50%,-50%);display:grid;place-items:center;min-width:44px;min-height:44px}
+  .hot.icon .e{display:block;line-height:1;filter:drop-shadow(0 5px 12px rgba(0,0,0,.5));transition:transform .18s,opacity .55s,filter .55s}
+
+  .hot.zone{border-radius:10px;border:2px solid transparent;transition:background .18s,border-color .18s}
+  .hot.zone .tag{bottom:auto;top:4px;transform:translate(-50%,0)}
+
+  /* 找到晶片：東西淡出，不打叉 */
+  .hot.settled{cursor:default}
+  .hot.dead{pointer-events:none}
+  .hot.dead .e{opacity:.2;filter:grayscale(1)}
+  /* 檢查過、沒有晶片：留一個淡淡的記號，東西本身不動 */
+  .hot.safe{outline:2px solid rgba(111,220,160,.5);outline-offset:1px;border-radius:10px;pointer-events:none}
+  .hot.safe::after{
+    content:"";position:absolute;top:4px;right:4px;width:12px;height:12px;border-radius:50%;
+    background:var(--safe);box-shadow:0 0 0 3px rgba(17,38,28,.55);
+  }
+
+  .hot.pop{animation:pop .4s}
+  .hot.icon.pop{animation:popc .4s}
+  .hot.shake{animation:shake .38s}
+  .hot.icon.shake{animation:shakec .38s}
+  body.reveal .hot[data-chip="1"]:not(.settled){outline:3px dashed var(--accent);outline-offset:2px;border-radius:10px}
+
+  body:not(.teacher) #btnReveal{display:none}
+  .rotate{display:none;margin:0 0 10px;padding:10px 14px;border-radius:12px;background:var(--accent-soft);border:1px solid var(--accent);text-align:center;font-size:15px}
+  @media (orientation:portrait) and (max-width:1100px){ .rotate{display:block} }
+  .hint{margin:10px auto 0;text-align:center;color:var(--muted);font-size:clamp(12px,1.2vw,15px)}
+
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}50%{transform:translateX(7px)}75%{transform:translateX(-4px)}}
+  @keyframes pop{0%{transform:scale(1)}35%{transform:scale(1.08)}100%{transform:scale(1)}}
+  @keyframes shakec{0%,100%{transform:translate(-50%,-50%)}25%{transform:translate(calc(-50% - 7px),-50%)}50%{transform:translate(calc(-50% + 7px),-50%)}75%{transform:translate(calc(-50% - 4px),-50%)}}
+  @keyframes popc{0%{transform:translate(-50%,-50%) scale(1)}35%{transform:translate(-50%,-50%) scale(1.14)}100%{transform:translate(-50%,-50%) scale(1)}}
+
+  .downbar{display:flex;align-items:center;gap:8px;justify-content:center;margin-top:12px;min-height:34px;flex-wrap:wrap}
+  .downbar .lbl{color:var(--muted);font-size:clamp(12px,1.2vw,15px);letter-spacing:.08em}
+  .downbar .chipdot{font-size:clamp(20px,2.2vw,28px);filter:grayscale(1);opacity:.55;animation:pop .4s}
+
+  .banner{
+    margin-top:14px;padding:14px 20px;border-radius:18px;background:var(--accent-soft);
+    border:1px solid var(--accent);display:none;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;
+  }
+  .banner.show{display:flex;animation:pop .5s}
+  .banner p{margin:0;font-size:clamp(14px,1.5vw,19px);line-height:1.6}
+  .banner button{
+    background:var(--accent);color:#1c1526;border:0;font:inherit;font-weight:800;font-size:clamp(14px,1.4vw,18px);
+    padding:13px 26px;border-radius:999px;cursor:pointer;white-space:nowrap;min-height:46px;
+  }
+
+  .msg{
+    width:min(100%, calc(58vh * 16 / 9));margin:12px auto 0;min-height:3.4em;
+    display:flex;align-items:center;justify-content:center;gap:12px;text-align:left;
+    padding:12px 20px;border-radius:16px;background:rgba(0,0,0,.24);border:1px solid var(--line);
+    font-size:clamp(15px,1.6vw,21px);font-weight:700;line-height:1.5;
+  }
+  .msg.hintmode{font-weight:400;color:var(--muted);font-size:clamp(13px,1.3vw,16px);background:transparent;border-color:transparent;text-align:center}
+  .msg .ic{font-size:1.5em;line-height:1;flex:none}
+  .msg .nm{color:var(--accent)}
+  .msg.chip{border-color:#ff9c6e}
+  .msg.nochip{border-color:rgba(111,220,160,.6)}
+  .msg.flash{animation:flash .45s}
+  @keyframes flash{0%{opacity:.35;transform:translateY(4px)}100%{opacity:1;transform:none}}
+
+  /* ── 結算 ── */
+  #final{
+    position:fixed;inset:0;background:radial-gradient(120% 90% at 50% 0%,#241a33 0%,#0d0a16 70%);z-index:60;
+    overflow-y:auto;-webkit-overflow-scrolling:touch;display:none;
+    padding:clamp(20px,4vh,54px) clamp(16px,4vw,44px) 60px;
+  }
+  #final.show{display:block}
+  #final .inner{max-width:1040px;margin:0 auto;text-align:center}
+  #final h2{font-size:clamp(25px,4vw,50px);margin:0 0 8px;letter-spacing:.04em;text-wrap:balance;animation:rise .6s both}
+  #final .count{color:#ff9c6e}
+  #final .sub{color:var(--muted);font-size:clamp(14px,1.5vw,19px);margin:0 0 26px;animation:rise .6s .1s both}
+  @keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+
+  .scoreboard{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:30px}
+  .stat{
+    background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:18px;
+    padding:16px 26px;min-width:150px;animation:rise .6s both;
+  }
+  .stat b{display:block;font-size:clamp(28px,4vw,44px);font-weight:900;line-height:1.1;font-variant-numeric:tabular-nums}
+  .stat span{display:block;margin-top:4px;color:var(--muted);font-size:clamp(12px,1.2vw,15px);letter-spacing:.06em}
+  .stat.off b{color:#ff9c6e}
+  .stat.on b{color:var(--safe)}
+  .stat.hit b{color:#ffd166}
+
+  .strip{
+    display:flex;flex-wrap:wrap;gap:10px;justify-content:center;
+    background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:20px;
+    padding:20px 18px;margin-bottom:12px;
+  }
+  .strip .s{font-size:clamp(26px,3.4vw,42px);line-height:1;filter:grayscale(1);opacity:0;animation:fall .5s forwards}
+  @keyframes fall{from{opacity:.95;transform:translateY(-14px) scale(1.15);filter:grayscale(0)}to{opacity:.4;transform:none;filter:grayscale(1)}}
+  .strip-cap{color:var(--muted);font-size:clamp(12px,1.2vw,15px);margin:0 0 30px}
+
+  .twocol{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin-bottom:30px}
+  .panel{background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:22px;padding:24px 20px;text-align:center}
+  .panel h3{margin:0 0 12px;font-size:clamp(15px,1.6vw,20px);letter-spacing:.08em;color:var(--accent)}
+  .panel .row{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;align-items:center;font-size:clamp(38px,5.4vw,66px);line-height:1.1}
+  .panel p{margin:14px 0 0;color:var(--muted);font-size:clamp(13px,1.35vw,16px);line-height:1.7}
+  .panel p b{color:var(--safe);font-weight:800;font-variant-numeric:tabular-nums}
+  .panel .row.dim{filter:grayscale(1);opacity:.5}
+  .panel p b.off{color:#ff9c6e}
+
+  .timeline{text-align:left;display:grid;gap:8px;margin-bottom:34px}
+  .tl-head{font-size:clamp(13px,1.3vw,16px);color:var(--accent);letter-spacing:.16em;margin:20px 0 4px;font-weight:700}
+  .tl-item{display:flex;gap:12px;align-items:flex-start;background:rgba(255,255,255,.06);border-radius:12px;padding:10px 14px}
+  .tl-item .e{font-size:24px;line-height:1.3;filter:grayscale(1);opacity:.75}
+  .tl-item .t{font-size:clamp(13px,1.3vw,17px);line-height:1.6}
+  .tl-item .t b{color:#ff9c6e;font-weight:700}
+
+  .ask{font-size:clamp(19px,2.5vw,34px);font-weight:900;line-height:1.6;margin:0 0 12px;text-wrap:balance}
+  .ask-sub{color:var(--muted);font-size:clamp(14px,1.5vw,18px);line-height:1.75;margin:0 0 30px}
+  #final .acts{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+  #final .acts button{
+    background:transparent;border:1px solid var(--line);color:var(--muted);font:inherit;font-size:15px;
+    padding:13px 26px;border-radius:999px;cursor:pointer;min-height:46px;
+  }
+  #final .acts button:hover{border-color:var(--accent);color:var(--accent)}
+
+  footer{margin-top:22px;color:rgba(246,241,234,.3);font-size:12px;letter-spacing:.08em;text-align:center}
+
+  @media (max-height:820px){ h1 small{display:none} header{padding-top:8px} nav{margin:8px 0 6px} .status{margin-bottom:8px} }
+  @media (max-width:640px){
+    .stage{width:100%}
+    h1 small{letter-spacing:.04em}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+    .strip .s{opacity:.4}
+  }
+</style>
+</head>
+<body data-scene="0">
+<div class="wrap">
+
+  <header>
+    <h1>沒有晶片的一天<small>點掉你覺得「裡面有晶片」的東西，看看會發生什麼事</small></h1>
+    <div class="tools">
+      <button id="btnReveal" type="button">顯示答案</button>
+      <button id="btnReset" type="button">重新開始</button>
+    </div>
+  </header>
+
+  <nav id="nav"></nav>
+
+  <div class="status">
+    <b id="sceneTitle"></b>
+    <span id="progressText"></span>
+    <div class="bar"><i id="bar"></i></div>
+  </div>
+
+  <p class="rotate">把平板橫過來拿，畫面會比較大、比較好點</p>
+  <div id="board"></div>
+  <div class="msg hintmode" id="msg" aria-live="polite"></div>
+
+  <div class="downbar" id="downbar"></div>
+
+  <div class="banner" id="banner">
+    <p id="bannerText"></p>
+    <button id="btnNext" type="button">下一個時間 →</button>
+  </div>
+
+  <footer>LIS 晶片課程．課堂暖身活動</footer>
+</div>
+
+
+<div id="final">
+  <div class="inner">
+    <h2>今天，你的一天有 <span class="count" id="finalCount">0</span> 樣東西停止工作</h2>
+    <p class="sub">從早上七點到晚上七點半，這是你關掉它們之後發生的事</p>
+
+    <div class="scoreboard">
+      <div class="stat off"><b id="stOff">0</b><span>停止工作</span></div>
+      <div class="stat on"><b id="stOn">0</b><span>完全不受影響</span></div>
+      <div class="stat hit"><b id="stAcc">0%</b><span>第一眼就找對</span></div>
+    </div>
+
+    <div class="strip" id="strip"></div>
+    <p class="strip-cap">一天之內，它們一個一個停下來</p>
+
+    <div class="twocol">
+      <div class="panel">
+        <h3>停下來的東西</h3>
+        <div class="row dim">⏰ 🚦 📺 🧊</div>
+        <p>今天有 <b class="off" id="stOff2">0</b> 樣東西停止工作。</p>
+      </div>
+      <div class="panel">
+        <h3>還活著的東西</h3>
+        <div class="row">🛏️ ✏️ 🚲 🥢</div>
+        <p>今天有 <b id="stOn2">0</b> 樣東西完全不受影響。<br>其中有些，其實也插著電。</p>
+      </div>
+    </div>
+
+    <p class="ask">會壞掉的和不會壞掉的，差在哪裡？</p>
+    <p class="ask-sub">停下來的那些，本來都會「自己判斷、自己決定要做什麼」。<br>還活著的那些，只要有人動它，它就動。<br>晶片在裡面到底做了什麼？我們接下來就要弄清楚。</p>
+
+    <div class="timeline" id="timeline"></div>
+
+    <div class="acts">
+      <button id="btnReplay" type="button">再玩一次</button>
+      <button id="btnBack" type="button">回到畫面</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ────────────────────────────────────────────────
+   比例基準：畫布固定 1600 x 900，每個場景訂 upm＝1 公尺幾單位，
+   所有東西依真實尺寸畫；小物件的圖示大小也由真實公尺換算。
+   畫面右下角附 1 公尺比例尺。畫面上每一樣看得到的東西都可以點。
+   ──────────────────────────────────────────────── */
+
+const ruler = (x, y, upm, label) => `
+  <g class="ruler" transform="translate(${x},${y})" stroke="#fff" stroke-width="3" fill="none">
+    <line x1="0" y1="0" x2="${upm}" y2="0"/><line x1="0" y1="-9" x2="0" y2="9"/><line x1="${upm}" y1="-9" x2="${upm}" y2="9"/>
+    <text x="${upm / 2}" y="-16" fill="#fff" stroke="none" font-size="24" font-weight="700"
+      text-anchor="middle" font-family="'Noto Sans TC',sans-serif">${label}</text>
+  </g>`;
+
+/* ── 場景 1：房間　upm 260，地面線 y=650（牆高 2.5 m）── */
+const ART_ROOM = `
+<svg class="art" viewBox="0 0 1600 900" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+  <defs>
+    <linearGradient id="r-wall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#513b63"/><stop offset="1" stop-color="#3b2948"/></linearGradient>
+    <linearGradient id="r-floor" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6f4c3a"/><stop offset="1" stop-color="#4e3224"/></linearGradient>
+    <linearGradient id="r-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd9a0"/><stop offset=".55" stop-color="#ffab74"/><stop offset="1" stop-color="#ef8a6c"/></linearGradient>
+    <linearGradient id="r-beam" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffd9a0" stop-opacity=".38"/><stop offset="1" stop-color="#ffd9a0" stop-opacity="0"/></linearGradient>
+  </defs>
+
+  <rect width="1600" height="900" fill="#3b2948"/>
+  <rect width="1600" height="650" fill="url(#r-wall)"/>
+  <rect y="650" width="1600" height="250" fill="url(#r-floor)"/>
+  <rect y="637" width="1600" height="13" fill="#2c1f38"/>
+  <g stroke="#43291c" stroke-width="3" opacity=".45">
+    <line x1="0" y1="700" x2="1600" y2="700"/><line x1="0" y1="765" x2="1600" y2="765"/><line x1="0" y1="838" x2="1600" y2="838"/>
+  </g>
+  <path d="M1010 91 L1400 91 L1520 650 L1180 650 Z" fill="url(#r-beam)"/>
+
+  <g id="g-win">
+    <rect x="1002" y="83" width="406" height="328" rx="4" fill="#c4c9cd"/>
+    <rect x="1014" y="95" width="382" height="304" fill="url(#r-sky)"/>
+    <circle cx="1110" cy="180" r="34" fill="#fff3cf" opacity=".92"/>
+    <rect x="1240" y="318" width="156" height="81" fill="#d97f5c" opacity=".45"/>
+    <rect x="1272" y="286" width="56" height="34" fill="#d97f5c" opacity=".45"/>
+    <path d="M1033 95 v304 M1071 95 v304 M1109 95 v304 M1147 95 v304 M1185 95 v304 M1223 95 v304 M1261 95 v304 M1299 95 v304 M1337 95 v304 M1375 95 v304 M1014 170 h382 M1014 330 h382" stroke="#3d3a44" stroke-width="5" opacity=".8"/>
+    <rect x="1020" y="101" width="190" height="292" fill="none" stroke="#dfe3e6" stroke-width="12"/>
+    <rect x="1200" y="101" width="190" height="292" fill="none" stroke="#eceff1" stroke-width="12"/>
+    <rect x="1210" y="226" width="7" height="44" rx="3" fill="#8f979c"/>
+    <rect x="990" y="399" width="430" height="18" rx="4" fill="#dccdb5"/>
+  </g>
+  <path d="M986 70 q42 168 0 340 l-64 0 0-340 z" fill="#6b4a74"/>
+  <path d="M1424 70 q-42 168 0 340 l64 0 0-340 z" fill="#6b4a74"/>
+
+  <g id="g-door">
+    <rect x="70" y="130" width="234" height="520" rx="6" fill="#6e4f3c"/>
+    <rect x="86" y="146" width="202" height="488" rx="5" fill="#87654e"/>
+    <rect x="106" y="170" width="162" height="176" rx="4" fill="#785843"/>
+    <rect x="106" y="376" width="162" height="234" rx="4" fill="#785843"/>
+    <circle cx="272" cy="400" r="9" fill="#f0dcab"/>
+  </g>
+
+  <g id="g-ac">
+    <rect x="400" y="26" width="234" height="78" rx="14" fill="#f3ede3"/>
+    <rect x="400" y="26" width="234" height="26" rx="13" fill="#fffaf2"/>
+    <rect x="414" y="84" width="206" height="12" rx="6" fill="#cdc3b4"/>
+    <circle cx="606" cy="46" r="6" fill="#7ad1a0"/>
+  </g>
+
+  <g id="g-poster">
+    <rect x="700" y="150" width="130" height="169" rx="5" fill="#5d4370"/>
+    <circle cx="765" cy="212" r="30" fill="#ffb35c" opacity=".85"/>
+    <path d="M714 296 l38 -48 32 34 26 -28 26 42 z" fill="#8f6ba6"/>
+  </g>
+
+  <g id="g-bed">
+    <rect x="360" y="416" width="30" height="234" rx="8" fill="#8a5c48"/>
+    <rect x="390" y="520" width="464" height="86" rx="12" fill="#f3e9db"/>
+    <path d="M530 512 h310 a14 14 0 0 1 14 14 v66 a14 14 0 0 1 -14 14 h-310 z" fill="#7ea9c9"/>
+    <path d="M530 512 v94" stroke="#6d97b6" stroke-width="5"/>
+    <rect x="394" y="606" width="20" height="44" fill="#6f4736"/>
+    <rect x="830" y="606" width="20" height="44" fill="#6f4736"/>
+  </g>
+  <g id="g-pillow"><rect x="400" y="478" width="112" height="44" rx="16" fill="#fffdf8"/></g>
+
+  <g id="g-nstand">
+    <rect x="870" y="507" width="117" height="143" rx="8" fill="#8a6a52"/>
+    <rect x="884" y="523" width="89" height="40" rx="4" fill="#9d7c62"/>
+    <rect x="884" y="575" width="89" height="40" rx="4" fill="#9d7c62"/>
+    <circle cx="928" cy="543" r="4" fill="#f0dcab"/><circle cx="928" cy="595" r="4" fill="#f0dcab"/>
+  </g>
+
+  <g id="g-desk">
+    <rect x="1020" y="455" width="312" height="14" rx="6" fill="#c48d63"/>
+    <rect x="1032" y="469" width="16" height="181" fill="#a0704f"/>
+    <rect x="1316" y="469" width="16" height="181" fill="#a0704f"/>
+    <rect x="1180" y="469" width="140" height="181" rx="6" fill="#b17f59"/>
+    <rect x="1194" y="485" width="112" height="34" rx="4" fill="#c08c63"/>
+    <rect x="1194" y="533" width="112" height="34" rx="4" fill="#c08c63"/>
+  </g>
+
+  <g id="g-chair">
+    <rect x="1230" y="429" width="14" height="104" rx="6" fill="#8b6247"/>
+    <rect x="1120" y="429" width="124" height="34" rx="8" fill="#9c7050"/>
+    <rect x="1100" y="533" width="150" height="16" rx="7" fill="#a5774f"/>
+    <rect x="1112" y="549" width="14" height="101" rx="5" fill="#8b6247"/>
+    <rect x="1224" y="549" width="14" height="101" rx="5" fill="#8b6247"/>
+  </g>
+
+  <g id="g-fan">
+    <ellipse cx="1420" cy="644" rx="58" ry="12" fill="#cfc7b8"/>
+    <rect x="1414" y="470" width="12" height="176" fill="#ded7c9"/>
+    <circle cx="1420" cy="390" r="52" fill="#e8e2d6"/>
+    <circle cx="1420" cy="390" r="44" fill="#b9b2a4"/>
+    <g fill="#e8e2d6">
+      <path d="M1420 390 l30 -26 a40 40 0 0 1 4 34 z"/>
+      <path d="M1420 390 l-6 40 a40 40 0 0 1 -30 -18 z"/>
+      <path d="M1420 390 l-24 -30 a40 40 0 0 1 34 -10 z"/>
+    </g>
+    <circle cx="1420" cy="390" r="9" fill="#8f887a"/>
+    <g stroke="#d8d1c3" stroke-width="2" fill="none" opacity=".8"><circle cx="1420" cy="390" r="20"/><circle cx="1420" cy="390" r="32"/></g>
+    <rect x="1400" y="442" width="40" height="22" rx="8" fill="#ded7c9"/>
+  </g>
+
+  <g id="g-rug">
+    <ellipse cx="700" cy="772" rx="208" ry="54" fill="#7a5875" opacity=".9"/>
+    <ellipse cx="700" cy="772" rx="160" ry="38" fill="none" stroke="#8e6a88" stroke-width="6" opacity=".8"/>
+  </g>
+
+  ${ruler(1160, 866, 260, "1 公尺")}
+</svg>`;
+
+/* 臺灣公寓的鐵窗與冷氣室外機 */
+const ironWin = (x, y, w, h) => {
+  let bars = "";
+  for(let bx = x + 12; bx < x + w; bx += 14) bars += `M${bx} ${y} v${h} `;
+  return `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="#86a9bd" opacity=".55"/>
+    <path d="${bars}" stroke="#22374a" stroke-width="3"/>
+    <rect x="${x - 4}" y="${y - 4}" width="${w + 8}" height="${h + 8}" fill="none" stroke="#22374a" stroke-width="4"/>`;
+};
+const acUnit = (x, y) => `<rect x="${x}" y="${y}" width="46" height="34" rx="3" fill="#d6d3ca"/><circle cx="${x + 18}" cy="${y + 17}" r="11" fill="#a9a59b"/>`;
+
+/* ── 場景 2：上學路上　對街 upm 150（地面 y=520）／馬路 170（y=700）／人行道 210（y=880）── */
+const ART_STREET = `
+<svg class="art" viewBox="0 0 1600 900" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+  <defs>
+    <linearGradient id="s-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3b78a8"/><stop offset="1" stop-color="#a9cfe0"/></linearGradient>
+    <linearGradient id="s-road" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2f3640"/><stop offset="1" stop-color="#1f242c"/></linearGradient>
+    <linearGradient id="s-walk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7a7673"/><stop offset="1" stop-color="#5c5957"/></linearGradient>
+    <linearGradient id="s-glass" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d8eef5" stop-opacity=".55"/><stop offset="1" stop-color="#9fc9d8" stop-opacity=".35"/></linearGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#s-sky)"/>
+
+  <!-- 遠景公寓 -->
+  <rect x="560" y="40" width="300" height="480" fill="#4f6f86"/>
+  ${ironWin(590,80,100,80)}${ironWin(740,80,100,80)}
+  ${ironWin(590,200,100,80)}${ironWin(740,200,100,80)}
+  ${ironWin(590,320,100,80)}${ironWin(740,320,100,80)}
+  ${acUnit(694,122)}${acUnit(694,242)}
+  <rect x="1000" y="0" width="320" height="520" fill="#46667d"/>
+  ${ironWin(1030,30,110,84)}${ironWin(1180,30,110,84)}${ironWin(1030,150,110,84)}${ironWin(1180,150,110,84)}
+  <rect x="1340" y="70" width="260" height="450" fill="#557790"/>
+  ${ironWin(1370,100,90,76)}${ironWin(1490,100,90,76)}
+
+  <!-- 超商：招牌、店內（提款機在店裡，隔著玻璃看得到）、自動門 -->
+  <rect x="0" y="10" width="560" height="510" fill="#ece6d8"/>
+  <g id="g-signboard">
+    <rect x="0" y="10" width="560" height="120" fill="#2f8f6b"/>
+    <rect x="0" y="112" width="560" height="18" fill="#f2a03d"/>
+    <text x="226" y="88" fill="#fff" font-size="50" font-weight="900" text-anchor="middle" font-family="'Noto Sans TC',sans-serif">好好超商</text>
+    <rect x="452" y="36" width="82" height="60" rx="8" fill="#fff"/>
+    <text x="493" y="77" fill="#2f8f6b" font-size="30" font-weight="900" text-anchor="middle" font-family="'Noto Sans TC',sans-serif">24H</text>
+  </g>
+  <rect x="20" y="130" width="242" height="390" fill="#f6efe0"/>
+  <rect x="200" y="300" width="56" height="220" fill="#b9b2a2"/>
+  <rect x="200" y="356" width="56" height="6" fill="#8e887c"/><rect x="200" y="418" width="56" height="6" fill="#8e887c"/><rect x="200" y="480" width="56" height="6" fill="#8e887c"/>
+  <g fill="#e2725b"><rect x="206" y="330" width="14" height="24"/><rect x="228" y="330" width="14" height="24"/></g>
+  <g fill="#5fa8d3"><rect x="206" y="392" width="14" height="24"/><rect x="232" y="392" width="14" height="24"/></g>
+  <g fill="#f2c14e"><rect x="210" y="454" width="14" height="24"/><rect x="232" y="454" width="14" height="24"/></g>
+  <g id="g-atm">
+    <rect x="70" y="280" width="120" height="240" rx="8" fill="#c9ccc6"/>
+    <rect x="62" y="262" width="136" height="26" rx="6" fill="#2f8f6b"/>
+    <text x="130" y="282" fill="#fff" font-size="19" font-weight="900" text-anchor="middle" font-family="'Noto Sans TC',sans-serif">ATM</text>
+    <rect x="84" y="296" width="92" height="60" rx="5" fill="#16323f"/>
+    <rect x="90" y="302" width="80" height="48" rx="3" fill="#2f6f8a"/>
+    <g fill="#9fd0e0"><rect x="98" y="310" width="46" height="6"/><rect x="98" y="324" width="60" height="6"/><rect x="98" y="338" width="34" height="6"/></g>
+    <g fill="#8d918c">
+      <rect x="88" y="368" width="16" height="14" rx="3"/><rect x="110" y="368" width="16" height="14" rx="3"/><rect x="132" y="368" width="16" height="14" rx="3"/>
+      <rect x="88" y="388" width="16" height="14" rx="3"/><rect x="110" y="388" width="16" height="14" rx="3"/><rect x="132" y="388" width="16" height="14" rx="3"/>
+      <rect x="88" y="408" width="16" height="14" rx="3"/><rect x="110" y="408" width="16" height="14" rx="3"/><rect x="132" y="408" width="16" height="14" rx="3"/>
+    </g>
+    <rect x="156" y="368" width="20" height="54" rx="4" fill="#6f7570"/>
+    <rect x="84" y="438" width="92" height="14" rx="4" fill="#3d4340"/>
+  </g>
+  <g id="g-storewin">
+    <rect x="20" y="130" width="242" height="390" fill="url(#s-glass)"/>
+    <rect x="20" y="130" width="242" height="390" fill="none" stroke="#c9c3b2" stroke-width="8"/>
+    <path d="M34 146 h70 l-52 96 z" fill="#ffffff" opacity=".22"/>
+  </g>
+  <g id="g-door">
+    <rect x="286" y="130" width="248" height="390" fill="#f6efe0"/>
+    <rect x="290" y="205" width="120" height="315" fill="url(#s-glass)" stroke="#c9c3b2" stroke-width="6"/>
+    <rect x="410" y="205" width="120" height="315" fill="url(#s-glass)" stroke="#c9c3b2" stroke-width="6"/>
+    <rect x="286" y="130" width="248" height="75" fill="url(#s-glass)" stroke="#c9c3b2" stroke-width="6"/>
+    <rect x="386" y="184" width="48" height="16" rx="4" fill="#2b2f33"/>
+    <circle cx="424" cy="192" r="3" fill="#e5483f"/>
+    <text x="410" y="300" fill="#6a8f9c" font-size="20" text-anchor="middle" font-family="'Noto Sans TC',sans-serif">自動門</text>
+  </g>
+
+  <!-- 路口號誌：懸臂上的橫式紅黃綠燈＋桿子上的行人號誌 -->
+  <g id="g-light">
+    <rect x="748" y="120" width="14" height="400" fill="#5a646e"/>
+    <rect x="755" y="124" width="235" height="10" fill="#5a646e"/>
+    <rect x="814" y="104" width="172" height="54" rx="12" fill="#2b333c"/>
+    <circle cx="846" cy="131" r="19" fill="#e5483f"/>
+    <circle cx="900" cy="131" r="19" fill="#4d555e"/>
+    <circle cx="954" cy="131" r="19" fill="#4d555e"/>
+    <rect x="762" y="236" width="46" height="98" rx="6" fill="#22282d"/>
+    <rect x="767" y="241" width="36" height="42" rx="3" fill="#2f1a1a"/>
+    <g fill="#ff5a4f"><circle cx="785" cy="249" r="4"/><rect x="781" y="254" width="8" height="14" rx="2"/><rect x="781" y="268" width="3" height="10"/><rect x="786" y="268" width="3" height="10"/></g>
+    <rect x="767" y="287" width="36" height="42" rx="3" fill="#17261c"/>
+    <g fill="#2f5a3c"><circle cx="787" cy="295" r="4"/><path d="M784 300 l6 0 4 12 -4 0 -2 -5 -3 13 -4 0 3 -13 -3 4 -3 -2 z"/></g>
+  </g>
+
+  <rect x="0" y="500" width="1600" height="20" fill="#8d8a84"/>
+  <rect y="520" width="1600" height="180" fill="url(#s-road)"/>
+  <g fill="#e8e3d2" opacity=".7">
+    <rect x="60" y="602" width="90" height="9"/><rect x="240" y="602" width="90" height="9"/><rect x="420" y="602" width="90" height="9"/>
+    <rect x="600" y="602" width="90" height="9"/><rect x="780" y="602" width="90" height="9"/>
+  </g>
+
+  <g id="g-car">
+    <path d="M60 700 v-120 q0 -18 20 -22 l110 -16 q60 -62 150 -66 h150 q86 4 140 66 l140 18 q20 4 20 24 v116 z" fill="#c9564f"/>
+    <path d="M250 512 h130 v62 h-190 z" fill="#b9dce8" opacity=".9"/>
+    <path d="M400 512 h110 q56 6 92 62 h-202 z" fill="#b9dce8" opacity=".9"/>
+    <rect x="60" y="640" width="765" height="14" fill="#a8443e"/>
+    <circle cx="230" cy="700" r="52" fill="#2b2b30"/><circle cx="230" cy="700" r="24" fill="#b6b2ab"/>
+    <circle cx="660" cy="700" r="52" fill="#2b2b30"/><circle cx="660" cy="700" r="24" fill="#b6b2ab"/>
+    <rect x="780" y="596" width="45" height="26" rx="8" fill="#ffe6a8"/>
+  </g>
+
+  <!-- 市區公車：側面上方是橘色 LED 路線顯示 -->
+  <g id="g-bus">
+    <rect x="900" y="190" width="680" height="510" rx="24" fill="#eef1f2"/>
+    <rect x="900" y="234" width="680" height="158" fill="#2e4656"/>
+    <path d="M1120 234 v158 M1380 234 v158" stroke="#eef1f2" stroke-width="10"/>
+    <rect x="916" y="198" width="290" height="32" rx="4" fill="#111"/>
+    <text x="1061" y="222" fill="#ffb53a" font-size="22" font-weight="700" text-anchor="middle" font-family="'Noto Sans TC',sans-serif">262　往 民生社區</text>
+    <rect x="900" y="520" width="680" height="26" fill="#2d6fb3"/>
+    <rect x="900" y="546" width="680" height="10" fill="#41b37c"/>
+    <rect x="930" y="404" width="100" height="296" rx="6" fill="#30485a"/>
+    <line x1="980" y1="404" x2="980" y2="700" stroke="#8fb1c2" stroke-width="4"/>
+    <rect x="1250" y="404" width="100" height="296" rx="6" fill="#30485a"/>
+    <line x1="1300" y1="404" x2="1300" y2="700" stroke="#8fb1c2" stroke-width="4"/>
+    <circle cx="1130" cy="700" r="76" fill="#23252b"/><circle cx="1130" cy="700" r="34" fill="#b6b2ab"/>
+    <circle cx="1480" cy="700" r="76" fill="#23252b"/><circle cx="1480" cy="700" r="34" fill="#b6b2ab"/>
+  </g>
+
+  <rect y="700" width="1600" height="200" fill="url(#s-walk)"/>
+  <g stroke="#4c4947" stroke-width="3" opacity=".55">
+    <line x1="0" y1="760" x2="1600" y2="760"/><line x1="0" y1="830" x2="1600" y2="830"/>
+    <line x1="300" y1="700" x2="300" y2="900"/><line x1="760" y1="700" x2="760" y2="900"/><line x1="1240" y1="700" x2="1240" y2="900"/>
+  </g>
+
+  <g id="g-bike">
+    <g fill="none" stroke="#2f3a44" stroke-width="12">
+      <circle cx="200" cy="782" r="86"/><circle cx="424" cy="782" r="86"/>
+      <path d="M200 782 l82 -102 h90 l52 102"/><path d="M282 680 l-40 102 h182"/><path d="M372 680 l22 -40"/>
+    </g>
+    <rect x="248" y="644" width="76" height="18" rx="9" fill="#2f3a44"/>
+    <path d="M388 626 h54" stroke="#2f3a44" stroke-width="14" stroke-linecap="round"/>
+    <path d="M436 640 h62 l-8 40 h-46 z" fill="none" stroke="#2f3a44" stroke-width="6"/>
+  </g>
+
+  <!-- 停車再開標誌：紅色八角形、白邊、「停」 -->
+  <g id="g-sign">
+    <rect x="612" y="596" width="16" height="278" fill="#8a8f96"/>
+    <path d="M620 418 l64 26 26 64 -26 64 -64 26 -64 -26 -26 -64 26 -64 z" fill="#c0392b"/>
+    <path d="M620 430 l58 24 23 54 -23 54 -58 24 -58 -24 -23 -54 23 -54 z" fill="none" stroke="#fff" stroke-width="5"/>
+    <text x="620" y="532" fill="#fff" font-size="66" font-weight="900" text-anchor="middle" font-family="'Noto Sans TC',sans-serif">停</text>
+  </g>
+
+  <!-- 智慧型公車站牌：站名、橘色 LED 到站時間、路線牌 -->
+  <g id="g-stop">
+    <rect x="1232" y="250" width="16" height="630" fill="#6b7178"/>
+    <rect x="1177" y="250" width="126" height="68" rx="4" fill="#f4f4f0"/>
+    <rect x="1177" y="250" width="126" height="20" rx="4" fill="#1f5fa8"/>
+    <text x="1240" y="266" fill="#fff" font-size="14" font-weight="700" text-anchor="middle" font-family="'Noto Sans TC',sans-serif">公車站</text>
+    <text x="1240" y="304" fill="#1f3f6b" font-size="24" font-weight="900" text-anchor="middle" font-family="'Noto Sans TC',sans-serif">好好國小</text>
+    <rect x="1177" y="324" width="126" height="96" rx="4" fill="#24292e"/>
+    <rect x="1185" y="332" width="110" height="80" rx="2" fill="#0b0c0d"/>
+    <g fill="#ffb53a" font-size="16" font-weight="700" font-family="'Noto Sans TC',sans-serif">
+      <text x="1191" y="352">262　約3分</text><text x="1191" y="376">299　將到站</text><text x="1191" y="400">670　約15分</text>
+    </g>
+    <rect x="1187" y="428" width="106" height="124" rx="3" fill="#f2f2ee"/>
+    <g font-size="15" font-weight="700" fill="#333" font-family="'Noto Sans TC',sans-serif">
+      <rect x="1193" y="436" width="20" height="16" fill="#d9554f"/><text x="1219" y="449">262</text>
+      <rect x="1193" y="464" width="20" height="16" fill="#2d6fb3"/><text x="1219" y="477">299</text>
+      <rect x="1193" y="492" width="20" height="16" fill="#41b37c"/><text x="1219" y="505">670</text>
+      <rect x="1193" y="520" width="20" height="16" fill="#8a5a3c"/><text x="1219" y="533">棕9</text>
+    </g>
+  </g>
+
+  ${ruler(830, 878, 210, "1 公尺")}
+</svg>`;
+
+/* ── 場景 3：教室　upm 200（牆高 3 m，地面 y=700）／前景課桌 230（地面 y=900）── */
+const ART_CLASS = `
+<svg class="art" viewBox="0 0 1600 900" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+  <defs>
+    <linearGradient id="c-wall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5c5233"/><stop offset="1" stop-color="#443c26"/></linearGradient>
+    <linearGradient id="c-floor" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6b5c3c"/><stop offset="1" stop-color="#4a3f28"/></linearGradient>
+    <linearGradient id="c-win" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cfe4ec"/><stop offset="1" stop-color="#9dc3d2"/></linearGradient>
+  </defs>
+
+  <rect width="1600" height="900" fill="#443c26"/>
+  <rect width="1600" height="100" fill="#6a5f3d"/>
+  <rect y="100" width="1600" height="600" fill="url(#c-wall)"/>
+  <rect y="700" width="1600" height="200" fill="url(#c-floor)"/>
+  <rect y="686" width="1600" height="16" fill="#332c1b"/>
+  <g stroke="#3f3521" stroke-width="3" opacity=".5"><line x1="0" y1="760" x2="1600" y2="760"/><line x1="0" y1="830" x2="1600" y2="830"/></g>
+
+  <g id="g-board">
+    <rect x="400" y="272" width="800" height="248" rx="6" fill="#2e4a3c"/>
+    <rect x="390" y="262" width="820" height="268" rx="8" fill="none" stroke="#b3986a" stroke-width="12"/>
+    <rect x="400" y="520" width="800" height="18" fill="#b3986a"/>
+    <g stroke="#c9d8cd" stroke-width="4" opacity=".55" stroke-linecap="round">
+      <path d="M440 330 h170"/><path d="M440 372 h240"/><path d="M440 414 h120"/>
+    </g>
+  </g>
+
+  <g id="g-screen">
+    <rect x="620" y="150" width="400" height="18" rx="6" fill="#8a8579"/>
+    <rect x="620" y="168" width="400" height="300" fill="#f0eee6"/>
+    <rect x="620" y="462" width="400" height="12" rx="5" fill="#c9c4b6"/>
+  </g>
+
+  <g id="g-proj">
+    <rect x="806" y="100" width="12" height="58" fill="#8a8579"/>
+    <rect x="777" y="158" width="70" height="26" rx="6" fill="#dcd7c9"/>
+    <circle cx="847" cy="171" r="9" fill="#8fb6c4"/>
+    <circle cx="789" cy="166" r="4" fill="#7ad1a0"/>
+  </g>
+
+  <g id="g-cac">
+    <rect x="160" y="160" width="180" height="60" rx="12" fill="#f3ede3"/>
+    <rect x="160" y="160" width="180" height="20" rx="10" fill="#fffaf2"/>
+    <rect x="172" y="204" width="156" height="10" rx="5" fill="#cdc3b4"/>
+    <circle cx="322" cy="174" r="5" fill="#7ad1a0"/>
+  </g>
+
+
+  <!-- 黑板上方的時鐘：直徑 0.35 m -->
+  <g id="g-clock">
+    <circle cx="500" cy="212" r="36" fill="#2f2f33"/>
+    <circle cx="500" cy="212" r="30" fill="#f7f4ea"/>
+    <path d="M500 185 v7 M500 232 v7 M473 212 h7 M520 212 h7" stroke="#2f2f33" stroke-width="3"/>
+    <path d="M500 212 L500 193" stroke="#2f2f33" stroke-width="4" stroke-linecap="round"/>
+    <path d="M500 212 L515 221" stroke="#2f2f33" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="500" cy="212" r="3" fill="#c0392b"/>
+  </g>
+
+  <!-- 廣播喇叭（木箱）：0.38 x 0.27 m，掛在牆角高處 -->
+  <g id="g-speaker">
+    <path d="M1324 124 v-14" stroke="#8a8579" stroke-width="4"/>
+    <rect x="1286" y="124" width="76" height="54" rx="4" fill="#d8c8a6"/>
+    <rect x="1294" y="132" width="60" height="38" rx="3" fill="#8f7f62"/>
+    <path d="M1294 140 h60 M1294 148 h60 M1294 156 h60 M1294 164 h60" stroke="#b3a383" stroke-width="2"/>
+  </g>
+
+  <!-- 吊扇：葉片展開 1.4 m，從天花板垂下 -->
+  <g id="g-cfan">
+    <rect x="1148" y="96" width="24" height="10" rx="3" fill="#a39d90"/>
+    <rect x="1156" y="100" width="8" height="80" fill="#8a8579"/>
+    <path d="M1126 196 L1022 204 Q1018 208 1024 210 L1128 204 Z" fill="#cfc8b8"/>
+    <path d="M1194 196 L1298 204 Q1302 208 1296 210 L1192 204 Z" fill="#cfc8b8"/>
+    <ellipse cx="1160" cy="190" rx="34" ry="14" fill="#d9d3c4"/>
+    <ellipse cx="1160" cy="203" rx="14" ry="5" fill="#bdb6a6"/>
+  </g>
+
+  <g id="g-notice">
+    <rect x="60" y="280" width="280" height="180" rx="6" fill="#6f6444"/>
+    <rect x="72" y="292" width="256" height="156" fill="#8a7d55"/>
+    <g fill="#efe9d6">
+      <rect x="92" y="312" width="64" height="46" rx="2" transform="rotate(-3 124 335)"/>
+      <rect x="176" y="318" width="58" height="42" rx="2" transform="rotate(2 205 339)"/>
+      <rect x="252" y="310" width="56" height="50" rx="2" transform="rotate(-2 280 335)"/>
+      <rect x="110" y="378" width="76" height="44" rx="2" transform="rotate(1 148 400)"/>
+      <rect x="212" y="382" width="88" height="40" rx="2" transform="rotate(-2 256 402)"/>
+    </g>
+  </g>
+
+  <g id="g-cwin">
+    <rect x="1420" y="180" width="150" height="340" rx="6" fill="#3d3524"/>
+    <rect x="1432" y="192" width="126" height="316" fill="url(#c-win)" opacity=".85"/>
+    <line x1="1495" y1="192" x2="1495" y2="508" stroke="#e3ddcd" stroke-width="10"/>
+  </g>
+
+  <g id="g-podium">
+    <rect x="1210" y="540" width="240" height="160" rx="6" fill="#a5774f"/>
+    <rect x="1210" y="540" width="240" height="16" rx="6" fill="#c48d63"/>
+  </g>
+  <g id="g-pc">
+    <rect x="1270" y="478" width="100" height="62" rx="6" fill="#2c3138"/>
+    <rect x="1278" y="486" width="84" height="46" rx="3" fill="#5f8fa8"/>
+    <rect x="1312" y="540" width="16" height="12" fill="#2c3138"/>
+    <rect x="1290" y="552" width="60" height="8" rx="4" fill="#2c3138"/>
+  </g>
+
+  <g id="g-cabinet">
+    <rect x="100" y="540" width="280" height="160" rx="6" fill="#9a7b52"/>
+    <rect x="100" y="540" width="280" height="14" rx="6" fill="#b9945f"/>
+    <line x1="240" y1="554" x2="240" y2="700" stroke="#87693f" stroke-width="4"/>
+  </g>
+  <g id="g-printer">
+    <rect x="180" y="470" width="90" height="70" rx="8" fill="#dcd7c9"/>
+    <rect x="192" y="456" width="66" height="18" rx="4" fill="#f4f1e8"/>
+    <rect x="192" y="510" width="66" height="10" rx="4" fill="#8e887c"/>
+    <circle cx="256" cy="486" r="5" fill="#6fbf8f"/>
+  </g>
+
+  <g id="g-desks">
+    <g>
+      <rect x="120" y="739" width="138" height="14" rx="5" fill="#d9b981"/>
+      <rect x="128" y="753" width="122" height="42" rx="4" fill="#8a96a2"/>
+      <rect x="132" y="795" width="12" height="105" fill="#6f7b87"/><rect x="234" y="795" width="12" height="105" fill="#6f7b87"/>
+    </g>
+    <g>
+      <rect x="580" y="739" width="138" height="14" rx="5" fill="#d9b981"/>
+      <rect x="588" y="753" width="122" height="42" rx="4" fill="#8a96a2"/>
+      <rect x="592" y="795" width="12" height="105" fill="#6f7b87"/><rect x="694" y="795" width="12" height="105" fill="#6f7b87"/>
+    </g>
+    <g>
+      <rect x="1040" y="739" width="138" height="14" rx="5" fill="#d9b981"/>
+      <rect x="1048" y="753" width="122" height="42" rx="4" fill="#8a96a2"/>
+      <rect x="1052" y="795" width="12" height="105" fill="#6f7b87"/><rect x="1154" y="795" width="12" height="105" fill="#6f7b87"/>
+    </g>
+  </g>
+
+  <g id="g-schair">
+    <rect x="806" y="704" width="14" height="104" rx="6" fill="#6f7b87"/>
+    <rect x="700" y="704" width="120" height="30" rx="8" fill="#d9b981"/>
+    <rect x="690" y="808" width="140" height="14" rx="6" fill="#d9b981"/>
+    <rect x="700" y="822" width="12" height="78" fill="#6f7b87"/><rect x="808" y="822" width="12" height="78" fill="#6f7b87"/>
+  </g>
+
+  ${ruler(300, 866, 230, "1 公尺")}
+</svg>`;
+
+/* ── 場景 4：家裡　upm 228（牆高 2.6 m，地面 y=680）／前景沙發 250（地面 y=900）── */
+const ART_HOME = `
+<svg class="art" viewBox="0 0 1600 900" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+  <defs>
+    <linearGradient id="h-wall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3c2b55"/><stop offset="1" stop-color="#2a1e3d"/></linearGradient>
+    <linearGradient id="h-floor" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5b4436"/><stop offset="1" stop-color="#3f2f25"/></linearGradient>
+    <linearGradient id="h-tv" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1b2230"/><stop offset="1" stop-color="#2b3648"/></linearGradient>
+  </defs>
+
+  <rect width="1600" height="900" fill="#2a1e3d"/>
+  <rect width="1600" height="87" fill="#4a3868"/>
+  <rect y="87" width="1600" height="593" fill="url(#h-wall)"/>
+  <rect y="680" width="1600" height="220" fill="url(#h-floor)"/>
+  <rect y="667" width="1600" height="14" fill="#221a31"/>
+  <g stroke="#34281f" stroke-width="3" opacity=".5"><line x1="0" y1="740" x2="1600" y2="740"/><line x1="0" y1="810" x2="1600" y2="810"/></g>
+
+  <g id="g-counter">
+    <rect x="0" y="475" width="470" height="205" fill="#7a6a86"/>
+    <rect x="0" y="466" width="470" height="16" rx="5" fill="#d9d2c4"/>
+    <rect x="40" y="496" width="170" height="130" rx="5" fill="#6b5c78"/>
+    <rect x="252" y="496" width="170" height="130" rx="5" fill="#6b5c78"/>
+  </g>
+  <g id="g-upper">
+    <rect x="0" y="180" width="430" height="150" rx="6" fill="#6a5a78"/>
+    <line x1="215" y1="180" x2="215" y2="330" stroke="#584a66" stroke-width="5"/>
+  </g>
+  <g id="g-tap">
+    <rect x="80" y="424" width="14" height="46" rx="6" fill="#c9c2b4"/>
+    <path d="M87 424 q0 -30 36 -30 h40" stroke="#c9c2b4" stroke-width="10" fill="none"/>
+  </g>
+
+  <g id="g-cooker">
+    <rect x="250" y="418" width="64" height="48" rx="9" fill="#e3e0d8"/>
+    <rect x="244" y="405" width="76" height="16" rx="7" fill="#cfcac0"/>
+    <rect x="272" y="399" width="20" height="8" rx="4" fill="#b3ada2"/>
+    <rect x="258" y="432" width="32" height="14" rx="3" fill="#2f3640"/>
+    <circle cx="304" cy="440" r="4" fill="#6fbf8f"/>
+  </g>
+
+  <g id="g-hwin">
+    <rect x="1000" y="150" width="320" height="190" rx="4" fill="#6b7178"/>
+    <rect x="1012" y="162" width="296" height="166" fill="#101a30"/>
+    <circle cx="1246" cy="200" r="22" fill="#e8e4c8" opacity=".9"/>
+    <g fill="#cfd6ea" opacity=".7">
+      <circle cx="1060" cy="192" r="3"/><circle cx="1112" cy="226" r="2.5"/><circle cx="1076" cy="268" r="2.5"/><circle cx="1280" cy="276" r="3"/>
+    </g>
+    <g fill="#3d5a86" opacity=".5">
+      <rect x="1012" y="286" width="70" height="42"/><rect x="1100" y="300" width="54" height="28"/><rect x="1238" y="294" width="70" height="34"/>
+    </g>
+    <rect x="1012" y="162" width="150" height="166" fill="none" stroke="#7d848a" stroke-width="8"/>
+    <rect x="1158" y="162" width="150" height="166" fill="none" stroke="#868d93" stroke-width="8"/>
+  </g>
+
+  <g id="g-fridge">
+    <rect x="530" y="270" width="160" height="410" rx="12" fill="#cfd4d8"/>
+    <rect x="530" y="270" width="160" height="150" rx="12" fill="#dde1e5"/>
+    <line x1="530" y1="424" x2="690" y2="424" stroke="#adb4ba" stroke-width="5"/>
+    <rect x="660" y="300" width="10" height="90" rx="5" fill="#8d949b"/>
+    <rect x="660" y="452" width="10" height="120" rx="5" fill="#8d949b"/>
+  </g>
+
+  <g id="g-hdoor">
+    <rect x="730" y="224" width="205" height="456" rx="6" fill="#6e4f3c"/>
+    <rect x="744" y="238" width="177" height="428" rx="5" fill="#87654e"/>
+    <rect x="762" y="258" width="141" height="160" rx="4" fill="#785843"/>
+    <rect x="762" y="446" width="141" height="200" rx="4" fill="#785843"/>
+    <circle cx="905" cy="452" r="8" fill="#f0dcab"/>
+  </g>
+
+  <g id="g-tvstand">
+    <rect x="980" y="577" width="365" height="103" rx="8" fill="#8a6a52"/>
+    <rect x="980" y="577" width="365" height="12" rx="6" fill="#a37f61"/>
+    <line x1="1162" y1="589" x2="1162" y2="680" stroke="#77583f" stroke-width="4"/>
+  </g>
+  <g id="g-tv">
+    <rect x="1022" y="413" width="280" height="164" rx="8" fill="#20262f"/>
+    <rect x="1032" y="423" width="260" height="134" rx="4" fill="url(#h-tv)"/>
+    <rect x="1150" y="577" width="24" height="14" fill="#20262f"/>
+  </g>
+
+  <g id="g-washer">
+    <path d="M1376 470 L1384 444 H1494 L1501 470 Z" fill="#cfd4d7"/>
+    <rect x="1402" y="451" width="44" height="13" rx="3" fill="#1d3b33"/>
+    <text x="1424" y="462" fill="#6fe3a8" font-size="11" text-anchor="middle" font-family="'Noto Sans TC',sans-serif">38</text>
+    <circle cx="1466" cy="457" r="5" fill="#9aa2a8"/><circle cx="1482" cy="457" r="5" fill="#9aa2a8"/>
+    <rect x="1370" y="470" width="137" height="210" rx="10" fill="#e3e6e8"/>
+    <rect x="1378" y="474" width="121" height="12" rx="4" fill="#c4cacd"/>
+    <rect x="1388" y="644" width="101" height="10" rx="3" fill="#cbd0d3"/>
+  </g>
+
+  <g id="g-robot">
+    <ellipse cx="1180" cy="790" rx="40" ry="14" fill="#1b1428" opacity=".5"/>
+    <ellipse cx="1180" cy="772" rx="40" ry="16" fill="#3c4450"/>
+    <ellipse cx="1180" cy="766" rx="40" ry="16" fill="#59636f"/>
+    <circle cx="1180" cy="762" r="9" fill="#2b323b"/>
+    <circle cx="1204" cy="760" r="4" fill="#6fe3a8"/>
+  </g>
+
+  <g id="g-sofa">
+    <rect x="400" y="688" width="500" height="212" rx="22" fill="#8d5f6e"/>
+    <rect x="400" y="688" width="500" height="90" rx="20" fill="#9c6b7b"/>
+    <rect x="432" y="768" width="200" height="60" rx="14" fill="#a97584"/>
+    <rect x="656" y="768" width="200" height="60" rx="14" fill="#a97584"/>
+    <rect x="400" y="740" width="46" height="160" rx="16" fill="#7d5261"/>
+    <rect x="854" y="740" width="46" height="160" rx="16" fill="#7d5261"/>
+  </g>
+
+  ${ruler(60, 866, 250, "1 公尺")}
+</svg>`;
+
+/* 斜著畫的圖示（掃把、尺、鉛筆、筷子）：真實長度是方框的對角線，所以 m 取長度 ÷ 1.41 */
+/* ────────────────────────────────────────────────
+   場景資料：畫面上每一樣東西都在這裡，都可以點。
+   zone = 畫布座標 [x,y,寬,高]；at = 圖示中心座標；m = 真實大小（公尺）。
+   ──────────────────────────────────────────────── */
+const SCENES = [
+  {
+    name:"早上 07:00", place:"你的房間", art:ART_ROOM, upm:260,
+    hint:"房間裡每一樣東西都可以點，點下去它會告訴你自己有沒有晶片",
+    items:[
+      {e:"⏰", n:"電子鬧鐘", chip:1, at:[928,488],  m:.12, say:"沒有了晶片，電子鬧鐘沒辦法計算時間，也不知道什麼時候該響，你就一路睡到早上九點半。"},
+      {e:"📱", n:"手機",     chip:1, at:[700,508],  m:.15, say:"沒有了晶片，手機沒辦法開機，螢幕一片黑，不能看時間，也沒辦法打電話跟媽媽說你要遲到了。"},
+      {e:"🔊", n:"藍牙喇叭", chip:1, at:[1060,436], m:.12, say:"沒有了晶片，藍牙喇叭收不到手機傳過來的音樂，音樂也就播不出來，房間安靜得像半夜。"},
+      {e:"❄️", n:"冷氣",     chip:1, zone:[400,26,234,78],   gid:"g-ac",  say:"沒有了晶片，冷氣沒辦法判斷房間有多熱、該吹多冷，整台停下來，房間悶得像蒸籠。"},
+      {e:"🌀", n:"電風扇",   chip:1, zone:[1362,338,116,312], gid:"g-fan", say:"沒有了晶片，遙控電風扇聽不懂遙控器送來的指令，你怎麼按它都不會轉。"},
+      {e:"🛏️", n:"床",       chip:0, zone:[360,416,494,234], gid:"g-bed",    say:"床不用判斷任何事，你躺上去它就撐住你。"},
+      {e:"☁️", n:"枕頭",     chip:0, zone:[396,474,120,52],  gid:"g-pillow", say:"枕頭裡面是棉花，沒有電，也沒有開關。"},
+      {e:"🚪", n:"房間門",   chip:0, zone:[70,130,234,520],  gid:"g-door",   say:"門靠的是門把和鉸鏈，你推它，它才開。"},
+      {e:"🪟", n:"窗戶",     chip:0, zone:[990,75,430,342],  gid:"g-win",    say:"窗戶是一塊玻璃，天亮天黑它都一樣。"},
+      {e:"🖼️", n:"海報",     chip:0, zone:[700,150,130,169], gid:"g-poster", say:"海報上的圖是印上去的，永遠不會換。"},
+      {e:"🗄️", n:"床頭櫃",   chip:0, zone:[870,507,117,143], gid:"g-nstand", say:"櫃子只負責站在那裡，什麼都不用想。"},
+      {e:"🪵", n:"書桌",     chip:0, zone:[1020,455,312,195],gid:"g-desk",   say:"桌子只要夠穩，就能把東西放上去。"},
+      {e:"🪑", n:"椅子",     chip:0, zone:[1100,429,150,221],gid:"g-chair",  say:"椅子不用知道你有多重，四隻腳撐住就好。"},
+      {e:"🟪", n:"地毯",     chip:0, zone:[492,718,416,108], gid:"g-rug",    say:"地毯只是一塊布，你踩上去它也不會知道。"},
+      {e:"📕", n:"課本",     chip:0, at:[1290,420], m:.22, say:"課本上的字是印上去的，它不會自己改變。"},
+      {e:"👕", n:"衣服",     chip:0, at:[620,772],  m:.5,  say:"衣服不需要開關，也不需要電。"},
+      {e:"✏️", n:"鉛筆",     chip:0, at:[800,800],  m:.13, say:"鉛筆只要你的手動它就動，它不用自己想。"}
+    ]
+  },
+  {
+    name:"上學 07:40", place:"上學的路上", art:ART_STREET, upm:210,
+    hint:"街上的東西離你越近畫得越大，這是真的透視；每一樣都可以點",
+    items:[
+      {e:"🚦", n:"紅綠燈",     chip:1, zone:[744,98,248,240],   gid:"g-light", say:"沒有了晶片，紅綠燈沒辦法計算什麼時候該換燈，一直卡在紅燈，整個路口塞成一團。"},
+      {e:"🚌", n:"公車",       chip:1, zone:[900,190,680,510],  gid:"g-bus",   say:"沒有了晶片，公車上的刷卡機讀不出你悠遊卡裡的資料，嗶不過去，司機只好請大家排隊投零錢。"},
+      {e:"🚗", n:"汽車",       chip:1, zone:[60,446,765,306],   gid:"g-car",   say:"沒有了晶片，汽車的電腦沒辦法控制引擎什麼時候噴油、什麼時候點火，車子發不動，爸爸沒辦法載你上學。"},
+      {e:"🏧", n:"提款機",     chip:1, zone:[58,258,144,266],   gid:"g-atm",   say:"沒有了晶片，提款機沒辦法確認提款卡和密碼對不對，也算不出要給多少錢，大家都領不到錢。"},
+      {e:"🚪", n:"超商自動門", chip:1, zone:[286,130,248,316],  gid:"g-door",  say:"沒有了晶片，自動門沒辦法判斷有沒有人走過來，門一直關著，大家只能站在門口等。"},
+      {e:"🚏", n:"電子站牌",   chip:1, zone:[1172,246,136,310], gid:"g-stop",  say:"沒有了晶片，電子站牌收不到公車現在開到哪裡的資料，到站時間全部消失，沒人知道下一班車什麼時候來。"},
+      {e:"🚲", n:"腳踏車",     chip:0, zone:[106,590,406,300],  gid:"g-bike",  say:"腳踏車靠你的腳，不靠電，也不用判斷。"},
+      {e:"🛑", n:"停車標誌",   chip:0, zone:[526,414,188,188],  gid:"g-sign",  say:"標誌只是一塊鐵牌，上面的字不會自己變。"},
+      {e:"🏪", n:"超商招牌",   chip:0, zone:[0,10,560,120],     gid:"g-signboard", say:"招牌是做好掛上去的，它不會自己換字。"},
+      {e:"🪟", n:"超商玻璃窗", chip:0, zone:[16,126,250,398],   gid:"g-storewin",  say:"玻璃只是透明的，裡面有沒有人它都一樣。"},
+      {e:"☂️", n:"雨傘",       chip:0, at:[1430,736], m:.9, say:"雨傘靠的是骨架和布，撐開就能擋雨。"}
+    ]
+  },
+  {
+    name:"白天 10:20", place:"教室裡", art:ART_CLASS, upm:230,
+    hint:"黑板 4 公尺寬、課桌 70 公分高，都照實際尺寸畫",
+    items:[
+      {e:"💻", n:"電腦",     chip:1, zone:[1266,474,108,88], gid:"g-pc",      say:"沒有了晶片，電腦沒辦法開機，老師準備好的簡報和學習單全都打不開。"},
+      {e:"📽️", n:"投影機",   chip:1, zone:[773,154,80,34],   gid:"g-proj",    say:"沒有了晶片，投影機沒辦法處理電腦送過來的畫面，投影布幕上一片黑，簡報放不出來。"},
+      {e:"🕒", n:"時鐘",     chip:1, zone:[460,172,80,80],   gid:"g-clock",   say:"沒有了晶片，時鐘沒辦法算出一秒有多長，指針停在原地，大家都不知道現在幾點、還有多久下課。"},
+      {e:"🖨️", n:"印表機",   chip:1, zone:[176,452,98,90],   gid:"g-printer", say:"沒有了晶片，印表機看不懂電腦傳過來的檔案，也控制不了噴墨，學習單印不出來。"},
+      {e:"❄️", n:"教室冷氣", chip:1, zone:[160,160,180,60],  gid:"g-cac",     say:"沒有了晶片，教室冷氣沒辦法判斷教室有多熱、該怎麼吹，整台停下來，全班熱到趴在桌上。"},
+      {e:"📢", n:"廣播喇叭", chip:0, zone:[1280,104,88,80],  gid:"g-speaker", say:"喇叭本身沒有晶片，它只是把送過來的聲音放出來，自己不會決定要不要響。"},
+      {e:"💨", n:"吊扇",     chip:0, zone:[1012,92,296,124], gid:"g-cfan",    say:"教室的吊扇是用牆上的旋鈕開關調快慢，裡面沒有晶片，所以它還在轉。"},
+      {e:"🟩", n:"黑板",     chip:0, zone:[390,262,820,276], gid:"g-board",   say:"黑板只是一塊塗了漆的板子，字是老師自己寫上去的。"},
+      {e:"⬜", n:"投影布幕", chip:0, zone:[620,150,400,324], gid:"g-screen",  say:"布幕就是一塊白布。畫面是投影機送過來的，布本身不會想。"},
+      {e:"📋", n:"布告欄",   chip:0, zone:[60,280,280,180],  gid:"g-notice",  say:"布告欄上的紙不會自己換，要人去貼。"},
+      {e:"🗄️", n:"矮櫃",     chip:0, zone:[100,540,280,160], gid:"g-cabinet", say:"櫃子只要能放東西就好，不用判斷放的是什麼。"},
+      {e:"🏫", n:"講桌",     chip:0, zone:[1210,540,240,160],gid:"g-podium",  say:"講桌是一塊木頭，老師走了它也不會做事。"},
+      {e:"🪟", n:"教室窗戶", chip:0, zone:[1420,180,150,340],gid:"g-cwin",    say:"窗戶開不開，要有人去推它。"},
+      {e:"🪵", n:"課桌",     chip:0, zone:[114,730,152,170], gid:"g-desks",   say:"課桌只負責站好，它不知道你在寫什麼。"},
+      {e:"🪵", n:"課桌",     chip:0, zone:[574,730,152,170], gid:"g-desks",   say:"課桌只負責站好，它不知道你在寫什麼。"},
+      {e:"🪵", n:"課桌",     chip:0, zone:[1034,730,152,170],gid:"g-desks",   say:"課桌只負責站好，它不知道你在寫什麼。"},
+      {e:"💺", n:"椅子",     chip:0, zone:[686,700,148,200], gid:"g-schair",  say:"椅子只要四隻腳站得穩就能用。"},
+      {e:"📏", n:"尺",       chip:0, at:[190,722], m:.21, say:"尺上的刻度是刻上去的，它不會自己量。"},
+      {e:"🏀", n:"籃球",     chip:0, at:[1200,806], m:.24, say:"籃球裡面只有空氣，你拍它它就彈。"},
+      {e:"🧹", n:"掃把",     chip:0, at:[1420,736], m:.85, say:"掃把不需要電，也不需要開機。"}
+    ]
+  },
+  {
+    name:"晚上 19:30", place:"回到家裡", art:ART_HOME, upm:228,
+    hint:"冰箱 1.8 公尺高、電視 55 吋，都是真實尺寸",
+    items:[
+      {e:"🧊", n:"冰箱",       chip:1, zone:[530,270,160,410], gid:"g-fridge", say:"沒有了晶片，冰箱沒辦法判斷裡面夠不夠冷，也就不會啟動降溫，今天的晚餐在裡面慢慢壞掉。"},
+      {e:"📺", n:"電視",       chip:1, zone:[1022,413,280,164],gid:"g-tv",     say:"沒有了晶片，電視沒辦法把收到的訊號變成畫面和聲音，打開也是一片黑。"},
+      {e:"🧺", n:"洗衣機",     chip:1, zone:[1370,440,137,240],gid:"g-washer", say:"沒有了晶片，洗衣機沒辦法決定什麼時候進水、轉多久、什麼時候脫水，制服洗到一半就停住，明天你只能穿睡衣上學。"},
+      {e:"🤖", n:"掃地機器人", chip:1, zone:[1136,748,88,46],  gid:"g-robot",  say:"沒有了晶片，掃地機器人沒辦法判斷哪裡有牆、哪裡掃過了，停在客廳正中間，連充電座都找不到。"},
+      {e:"🍚", n:"電子鍋",     chip:1, zone:[240,395,84,76],   gid:"g-cooker", say:"沒有了晶片，電子鍋沒辦法控制加熱多久、多熱，飯煮到一半就停了，中間還是生的。（會跳起來的傳統電鍋沒有晶片，它還能煮。）"},
+      {e:"🎮", n:"遊戲機",     chip:1, at:[1240,535], m:.3, say:"沒有了晶片，遊戲機沒辦法算出遊戲畫面，也讀不到你按了哪個按鈕，今天沒得玩。"},
+      {e:"🚪", n:"房間門",     chip:0, zone:[730,224,205,456], gid:"g-hdoor",   say:"門靠的是門把和鉸鏈，推了就開。"},
+      {e:"🛋️", n:"沙發",       chip:0, zone:[400,688,500,212], gid:"g-sofa",    say:"沙發只負責軟，它不用知道誰坐上來。"},
+      {e:"🗄️", n:"電視櫃",     chip:0, zone:[980,577,365,103], gid:"g-tvstand", say:"櫃子撐住電視就好，電視壞了它也不知道。"},
+      {e:"🚰", n:"流理台",     chip:0, zone:[0,466,470,214],   gid:"g-counter", say:"檯面只是一塊板子，洗不洗碗它都一樣。"},
+      {e:"🪟", n:"夜晚的窗",   chip:0, zone:[1000,150,320,190],gid:"g-hwin",    say:"窗戶外面天黑了，但窗戶自己不知道。"},
+      {e:"💧", n:"水龍頭",     chip:0, zone:[74,388,106,84],   gid:"g-tap",     say:"水龍頭靠你轉開它，它不會自己決定要不要出水。"},
+      {e:"🗃️", n:"廚房上櫃",   chip:0, zone:[0,180,430,150],   gid:"g-upper",   say:"櫃子只是幾塊木板，門要你自己開。"},
+      {e:"🧦", n:"襪子",       chip:0, at:[1010,800], m:.25, say:"襪子不需要判斷任何事，穿上就暖。"},
+      {e:"🥢", n:"筷子",       chip:0, at:[400,440], m:.17, say:"筷子靠的是你的手指，不是電。"}
+    ]
+  }
+];
+
+const $ = s => document.querySelector(s);
+const board = $("#board"), nav = $("#nav"), banner = $("#banner"), msg = $("#msg"), downbar = $("#downbar");
+let cur = 0;
+let state = SCENES.map(s => s.items.map(() => 0));   // 0=沒點 1=找到晶片 2=檢查過沒晶片
+let firstTryOK = 0, firstTryTotal = 0;               // 統計：第一次點就點到有晶片的比例
+
+const SAVE_KEY = "nochip-day-v1";
+if(/[?&#]teacher/.test(location.search + location.hash)) document.body.classList.add("teacher");
+function save(){
+  try{ localStorage.setItem(SAVE_KEY, JSON.stringify({state, cur, firstTryOK, firstTryTotal})); }catch(e){}
+}
+function load(){
+  try{
+    const d = JSON.parse(localStorage.getItem(SAVE_KEY) || "null");
+    const ok = d && Array.isArray(d.state) && d.state.length === SCENES.length &&
+      d.state.every((a,i) => Array.isArray(a) && a.length === SCENES[i].items.length);
+    if(!ok) return;
+    state = d.state;
+    cur = Math.min(Math.max(d.cur | 0, 0), SCENES.length - 1);
+    firstTryOK = d.firstTryOK | 0; firstTryTotal = d.firstTryTotal | 0;
+  }catch(e){}
+}
+
+const px = v => (v / 1600 * 100) + "%";
+const py = v => (v / 900 * 100) + "%";
+const chipTotal = i => SCENES[i].items.filter(x => x.chip).length;
+const chipFound = i => state[i].filter((v,k) => v === 1 && SCENES[i].items[k].chip).length;
+
+function buildNav(){
+  nav.innerHTML = "";
+  SCENES.forEach((s,i) => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.innerHTML = `<span class="dot"></span>${s.name}　${s.place}`;
+    b.className = (i === cur ? "active " : "") + (chipFound(i) === chipTotal(i) ? "done" : "");
+    b.onclick = () => { cur = i; render(); };
+    nav.appendChild(b);
+  });
+}
+
+function render(){
+  document.body.dataset.scene = cur;
+  const S = SCENES[cur];
+  $("#sceneTitle").textContent = S.place;
+  showHint(S.hint || "");
+  buildNav();
+  board.innerHTML = "";
+
+  const stage = document.createElement("div");
+  stage.className = "stage";
+  stage.innerHTML = S.art;
+  board.appendChild(stage);
+
+  // 面積大的先放，小的後放；圖示一律放最上層，確保小東西點得到
+  const order = S.items.map((it,k) => [it,k]).sort((a,b) => {
+    const area = it => it.zone ? it.zone[2] * it.zone[3] : -1;
+    return area(b[0]) - area(a[0]);
+  });
+
+  order.forEach(([it,k]) => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.dataset.chip = it.chip ? "1" : "0";
+    b.setAttribute("aria-label", it.n);
+    if(it.zone){
+      const [x,y,w,h] = it.zone;
+      b.className = "hot zone";
+      b.style.left = px(x); b.style.top = py(y); b.style.width = px(w); b.style.height = py(h);
+      b.innerHTML = `<span class="tag">${it.n}</span>`;
+    }else{
+      b.className = "hot icon";
+      b.style.left = px(it.at[0]); b.style.top = py(it.at[1]);
+      const k2 = (it.m * S.upm * 1.15) / 16;   // 真實公尺 → 畫布單位 → 相對舞台寬度
+      b.innerHTML = `<span class="e" style="font-size:calc(var(--u) * ${k2.toFixed(2)})">${it.e}</span><span class="tag">${it.n}</span>`;
+    }
+    if(state[cur][k] === 1){ b.classList.add("settled","dead"); markBroken(stage,it,true); }
+    if(state[cur][k] === 2){ b.classList.add("settled","safe"); }
+    b.onclick = () => tap(b,k,stage);
+    stage.appendChild(b);
+  });
+
+  const setUnit = () => stage.style.setProperty("--u", (stage.clientWidth / 100) + "px");
+  setUnit();
+  requestAnimationFrame(setUnit);
+  new ResizeObserver(setUnit).observe(stage);
+
+  updateProgress();
+  updateDownbar();
+  save();
+}
+
+function markBroken(stage,it,on){
+  if(!it.gid) return;
+  const g = stage.querySelector("#" + it.gid);
+  if(g) g.classList.toggle("broken", on);
+}
+
+function tap(el,k,stage){
+  if(state[cur][k]) return;
+  const it = SCENES[cur].items[k];
+  firstTryTotal++;
+  if(it.chip){
+    firstTryOK++;
+    state[cur][k] = 1;
+    el.classList.add("pop");
+    setTimeout(() => el.classList.add("settled","dead"), 180);
+    markBroken(stage,it,true);
+  }else{
+    state[cur][k] = 2;
+    el.classList.add("shake");
+    setTimeout(() => el.classList.remove("shake"), 400);
+    el.classList.add("settled","safe");
+  }
+  el.blur();
+  showMsg(it);
+  save();
+  setTimeout(() => { updateProgress(); updateDownbar(); }, 60);
+  buildNav();
+}
+
+function showHint(text){
+  msg.className = "msg hintmode";
+  msg.textContent = text;
+}
+function showMsg(it){
+  msg.className = "msg " + (it.chip ? "chip" : "nochip");
+  msg.innerHTML = it.chip
+    ? `<span class="ic">${it.e}</span><span>${it.say}</span>`
+    : `<span class="ic">${it.e}</span><span><span class="nm">${it.n}</span>：${it.say}</span>`;
+  void msg.offsetWidth;
+  msg.classList.add("flash");
+  const r = msg.getBoundingClientRect();
+  if(r.bottom > window.innerHeight) msg.scrollIntoView({block:"nearest", behavior:"smooth"});
+}
+
+function updateProgress(){
+  const found = chipFound(cur), total = chipTotal(cur);
+  $("#progressText").textContent = `這裡有 ${total} 樣東西裝了晶片，你已經找到 ${found} 樣`;
+  $("#bar").style.width = (found / total * 100) + "%";
+  if(found === total){
+    const last = cur === SCENES.length - 1;
+    $("#bannerText").textContent = last
+      ? "一整天結束了。來看看你的一天變成什麼樣子。"
+      : `${SCENES[cur].place}的東西都停了。時間繼續往前走。`;
+    $("#btnNext").textContent = last ? "看看你的一天 →" : "下一個時間 →";
+    banner.classList.add("show");
+  }else{
+    banner.classList.remove("show");
+  }
+}
+
+function updateDownbar(){
+  const dead = SCENES[cur].items.filter((it,k) => state[cur][k] === 1);
+  downbar.innerHTML = dead.length
+    ? `<span class="lbl">已經停掉</span>` + dead.map(it => `<span class="chipdot">${it.e}</span>`).join("")
+    : "";
+}
+
+$("#btnNext").onclick = () => {
+  if(cur === SCENES.length - 1){ openFinal(); }
+  else { cur++; render(); window.scrollTo({top:0,behavior:"smooth"}); }
+};
+
+function openFinal(){
+  const strip = $("#strip"), tl = $("#timeline");
+  strip.innerHTML = ""; tl.innerHTML = "";
+  let n = 0, safeCount = 0;
+
+  SCENES.forEach((S,i) => {
+    safeCount += S.items.filter((it,k) => !it.chip).length;
+    const dead = S.items.filter((it,k) => state[i][k] === 1);
+    if(!dead.length) return;
+    const h = document.createElement("div");
+    h.className = "tl-head";
+    h.textContent = S.name + "　" + S.place;
+    tl.appendChild(h);
+    dead.forEach(it => {
+      const s = document.createElement("span");
+      s.className = "s";
+      s.textContent = it.e;
+      s.style.animationDelay = (n * 0.09) + "s";
+      strip.appendChild(s);
+      n++;
+      const d = document.createElement("div");
+      d.className = "tl-item";
+      d.innerHTML = `<span class="e">${it.e}</span><span class="t"><b>${it.n}</b>　${it.say}</span>`;
+      tl.appendChild(d);
+    });
+  });
+
+  $("#finalCount").textContent = n;
+  $("#stOff").textContent = n;
+  $("#stOn").textContent = safeCount;
+  $("#stOn2").textContent = safeCount;
+  $("#stOff2").textContent = n;
+  $("#stAcc").textContent = firstTryTotal ? Math.round(firstTryOK / firstTryTotal * 100) + "%" : "0%";
+
+  document.querySelectorAll("#final .stat").forEach((el,i) => el.style.animationDelay = (0.15 + i * 0.08) + "s");
+  $("#final").classList.add("show");
+  $("#final").scrollTop = 0;
+}
+
+$("#btnBack").onclick = () => $("#final").classList.remove("show");
+$("#btnReplay").onclick = () => { reset(); $("#final").classList.remove("show"); };
+$("#btnReset").onclick = reset;
+function reset(){
+  state = SCENES.map(s => s.items.map(() => 0));
+  firstTryOK = 0; firstTryTotal = 0;
+  cur = 0; render(); window.scrollTo({top:0,behavior:"smooth"});
+}
+$("#btnReveal").onclick = function(){
+  document.body.classList.toggle("reveal");
+  this.classList.toggle("on", document.body.classList.contains("reveal"));
+};
+document.addEventListener("keydown", e => {
+  if(e.key === "Escape") $("#final").classList.remove("show");
+});
+
+load();
+render();
+</script>
+</body>
+</html>
