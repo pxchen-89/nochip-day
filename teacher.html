@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>沒有晶片的一天．老師控制台</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏆</text></svg>">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<style>
+  /* 投影專用：固定深色，教室開燈也看得清楚 */
+  :root{
+    --ground:#140e22; --panel:#211733; --panel2:#2b1f41; --line:rgba(255,255,255,.12);
+    --text:#f6f1ea; --muted:rgba(246,241,234,.62);
+    --accent:#ffb35c; --hot:#ff8a5c; --green:#6fdca0;
+    --gold:#ffd166; --silver:#cfd6e4; --bronze:#e0a06e;
+    --rowH:60px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{
+    background:radial-gradient(120% 90% at 50% -10%,#3a2752 0%,var(--ground) 62%);
+    color:var(--text);font-family:"Noto Sans TC","Microsoft JhengHei","PingFang TC",sans-serif;
+    display:flex;flex-direction:column;overflow:hidden;
+    padding:0 clamp(16px,2.4vw,40px);
+  }
+  button{font:inherit;cursor:pointer}
+  button:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+  [hidden]{display:none!important}
+
+  /* ── 頂部 ── */
+  .top{display:flex;align-items:center;gap:clamp(12px,2vw,28px);padding-block:14px;flex-wrap:wrap}
+  .brand{font-weight:900;font-size:clamp(18px,1.9vw,26px);letter-spacing:.05em;margin-right:auto}
+  .brand span{font-weight:400;color:var(--muted);font-size:.7em;margin-left:10px;letter-spacing:.1em}
+  .pill{display:flex;align-items:baseline;gap:8px;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:6px 18px;font-size:clamp(14px,1.3vw,18px);color:var(--muted)}
+  .pill b{color:var(--text);font-size:1.5em;font-weight:900;font-variant-numeric:tabular-nums;letter-spacing:.06em}
+  .pill.code b{color:var(--accent)}
+  .pill.clock b{min-width:3.2em;text-align:center}
+
+  main{flex:1;min-height:0;display:flex;flex-direction:column;padding-bottom:18px}
+  .view{flex:1;min-height:0}
+
+  .bigbtn{border:0;border-radius:999px;background:var(--accent);color:#1c1526;font-weight:900;font-size:clamp(18px,1.8vw,26px);padding:16px 42px;min-height:56px;box-shadow:0 10px 30px rgba(255,179,92,.25)}
+  .bigbtn:hover{filter:brightness(1.06)}
+  .bigbtn:disabled{opacity:.4;box-shadow:none;cursor:default}
+  .ghost{border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:999px;padding:10px 22px;font-size:15px;min-height:44px}
+  .ghost:hover{color:var(--accent);border-color:var(--accent)}
+
+  /* ── 設定未完成 ── */
+  .notice{margin:auto;max-width:620px;text-align:center;background:var(--panel);border:1px solid var(--line);border-radius:24px;padding:36px}
+  .notice h2{margin:0 0 12px}
+  .notice p{color:var(--muted);line-height:1.7}
+
+  /* ── 等待區 ── */
+  #vLobby{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:clamp(16px,2.4vw,36px);align-items:stretch}
+  .joincard{background:#fff;color:#1c1526;border-radius:28px;padding:clamp(16px,2vw,28px);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:0}
+  .joincard .qr{width:min(100%,46vh);aspect-ratio:1}
+  .joincard .qr svg{width:100%;height:100%;display:block}
+  .joincard .how{margin:10px 0 2px;font-size:clamp(16px,1.6vw,22px);font-weight:700}
+  .joincard .code{margin:4px 0;font-size:clamp(15px,1.4vw,19px);color:#5b5266}
+  .joincard .code b{display:block;font-size:clamp(44px,5.6vw,84px);font-weight:900;letter-spacing:.18em;color:#1c1526;line-height:1.1;font-variant-numeric:tabular-nums}
+  .joincard .url{margin:2px 0 0;font-size:clamp(12px,1.05vw,15px);color:#7a7286}
+  .roster{display:flex;flex-direction:column;min-height:0}
+  .roster h2{margin:4px 0 14px;font-size:clamp(22px,2.4vw,34px)}
+  .roster h2 b{color:var(--accent);font-variant-numeric:tabular-nums}
+  .names{flex:1;min-height:0;overflow:auto;display:flex;flex-wrap:wrap;align-content:flex-start;gap:10px;padding:4px}
+  .nm{border:0;background:var(--panel2);color:var(--text);border-radius:16px;padding:12px 22px;font-size:clamp(22px,2.3vw,34px);font-weight:900;animation:pop .45s cubic-bezier(.3,1.5,.5,1)}
+  .nm:hover{background:#4a2f3a;text-decoration:line-through}
+  .empty{color:var(--muted);font-size:18px}
+  .roster .tip{color:var(--muted);font-size:14px;margin:10px 0}
+  .roster .actions{display:flex;justify-content:flex-end}
+  @keyframes pop{0%{transform:scale(.4);opacity:0}100%{transform:none;opacity:1}}
+
+  /* ── 排行榜 ── */
+  #vPlay{display:grid;grid-template-columns:minmax(0,1fr) clamp(170px,16vw,240px);gap:clamp(14px,2vw,28px);min-height:0}
+  .boardcol{display:flex;flex-direction:column;min-height:0}
+  .classbar{display:flex;align-items:center;gap:16px;margin-bottom:14px;font-size:clamp(15px,1.4vw,20px);color:var(--muted)}
+  .classbar b{color:var(--text);font-size:1.4em;font-variant-numeric:tabular-nums}
+  .track{flex:1;height:12px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden}
+  .track i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--hot));border-radius:999px;transition:width .6s}
+  .lb{position:relative;flex:none}
+  .row{
+    position:absolute;left:0;right:0;top:0;height:calc(var(--rowH) - 8px);
+    display:grid;grid-template-columns:calc(var(--rowH) - 8px) minmax(6em,13em) minmax(0,1fr) 5.2em 4.6em;align-items:center;gap:14px;
+    background:var(--panel);border:1px solid var(--line);border-radius:14px;padding-right:16px;
+    transition:transform .7s cubic-bezier(.25,.9,.3,1),opacity .4s,background .4s;
+  }
+  .row .rk{height:100%;display:grid;place-items:center;border-radius:13px 0 0 13px;background:rgba(255,255,255,.06);font-weight:900;font-size:calc(var(--rowH) * .38);font-variant-numeric:tabular-nums}
+  .row.r1 .rk{background:var(--gold);color:#3a2a00}
+  .row.r2 .rk{background:var(--silver);color:#2a2f38}
+  .row.r3 .rk{background:var(--bronze);color:#3a2210}
+  .row .who{font-weight:900;font-size:calc(var(--rowH) * .36);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .row .bar{height:calc(var(--rowH) * .3);border-radius:999px;background:rgba(255,255,255,.06);overflow:hidden}
+  .row .bar i{display:block;height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,var(--accent),var(--hot));transition:width .7s cubic-bezier(.25,.9,.3,1)}
+  .row .pts{text-align:right;font-weight:900;font-size:calc(var(--rowH) * .4);font-variant-numeric:tabular-nums}
+  .row .fd{text-align:right;color:var(--muted);font-size:calc(var(--rowH) * .26);font-variant-numeric:tabular-nums;white-space:nowrap}
+  .row.up{background:#3a2a1c;border-color:var(--accent)}
+  .row.gone{opacity:0;pointer-events:none}
+  .others{margin-top:6px;display:flex;flex-wrap:wrap;gap:8px;overflow:auto;min-height:0}
+  .others span{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:5px 12px;font-size:clamp(13px,1.15vw,16px);color:var(--muted)}
+  .others span b{color:var(--text);margin:0 6px}
+  .waiting{color:var(--muted);font-size:20px;padding:20px 0}
+  .sidecol{display:flex;flex-direction:column;gap:14px;align-items:stretch}
+  .minijoin{background:#fff;color:#1c1526;border-radius:20px;padding:14px;text-align:center}
+  .minijoin .qr{width:100%;aspect-ratio:1}
+  .minijoin .qr svg{width:100%;height:100%;display:block}
+  .minijoin p{margin:6px 0 0;font-size:14px;color:#5b5266}
+  .minijoin b{display:block;font-size:clamp(26px,2.6vw,38px);letter-spacing:.14em;color:#1c1526;font-variant-numeric:tabular-nums}
+  .sidecol .bigbtn{padding:14px 18px;font-size:clamp(16px,1.5vw,22px);background:var(--hot)}
+  .rule{color:var(--muted);font-size:13px;line-height:1.7;margin:0}
+  .rule b{color:var(--text)}
+
+  /* ── 頒獎台 ── */
+  #vEnd{display:flex;flex-direction:column;min-height:0}
+  #vEnd h2{text-align:center;margin:0 0 4px;font-size:clamp(24px,2.8vw,40px);letter-spacing:.06em}
+  .podium{flex:1;min-height:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(10px,1.6vw,24px);align-items:end;max-width:1000px;width:100%;margin:0 auto;padding-top:10px}
+  .pcol{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;opacity:0;transform:translateY(40px);animation:rise .8s cubic-bezier(.2,1.2,.4,1) forwards}
+  .pcol .pname{font-weight:900;font-size:clamp(20px,2.4vw,36px);text-align:center;margin-bottom:8px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .pcol .medal{font-size:clamp(34px,4vw,60px);line-height:1}
+  .pcol .block{width:100%;border-radius:18px 18px 0 0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:16px;font-weight:900}
+  .pcol .block .ps{font-size:clamp(26px,3vw,46px);font-variant-numeric:tabular-nums}
+  .pcol .block .pf{font-size:clamp(13px,1.2vw,17px);font-weight:400;opacity:.8}
+  .p1 .block{height:62%;background:linear-gradient(180deg,var(--gold),#e6a83c);color:#3a2a00}
+  .p2 .block{height:46%;background:linear-gradient(180deg,var(--silver),#9aa6ba);color:#2a2f38}
+  .p3 .block{height:34%;background:linear-gradient(180deg,var(--bronze),#b8733f);color:#3a2210}
+  .pcol.empty .block{background:rgba(255,255,255,.06);color:var(--muted)}
+  @keyframes rise{to{opacity:1;transform:none}}
+  .restlist{list-style:none;margin:14px auto 0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px;max-width:1100px;width:100%;max-height:22vh;overflow:auto}
+  .restlist li{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:8px 14px;display:flex;gap:10px;font-size:clamp(14px,1.25vw,17px)}
+  .restlist .n{color:var(--muted);font-variant-numeric:tabular-nums;min-width:2em}
+  .restlist .s{margin-left:auto;font-weight:700;font-variant-numeric:tabular-nums}
+  .endactions{display:flex;justify-content:center;gap:12px;margin-top:14px}
+
+  @media (max-width:860px){
+    body{overflow:auto}
+    #vLobby,#vPlay{grid-template-columns:1fr}
+    .row{grid-template-columns:calc(var(--rowH) - 8px) minmax(4em,1fr) 4.6em 4em;}
+    .row .bar{display:none}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation-duration:.01ms!important;transition-duration:.01ms!important}
+  }
+</style>
+</head>
+<body>
+  <header class="top">
+    <div class="brand">沒有晶片的一天<span>老師控制台</span></div>
+    <div class="pill code">房間 <b id="roomCode">----</b></div>
+    <div class="pill"><b id="nPlayers">0</b> 人</div>
+    <div class="pill clock" id="clockPill" hidden>時間 <b id="clock">00:00</b></div>
+  </header>
+
+  <main>
+    <section class="view" id="vSetup">
+      <div class="notice"><h2 id="setupTitle">連線中…</h2><p id="setupText"></p></div>
+    </section>
+
+    <section class="view" id="vLobby" hidden>
+      <div class="joincard">
+        <div class="qr" id="qrBig"></div>
+        <p class="how">拿起平板，掃描 QR code 加入</p>
+        <p class="code">房間代碼<b id="codeBig">----</b></p>
+        <p class="url" id="urlText"></p>
+      </div>
+      <div class="roster">
+        <h2>已加入 <b id="nJoined">0</b> 人</h2>
+        <div class="names" id="names"><p class="empty">還沒有人加入，等學生掃碼…</p></div>
+        <p class="tip">點名字可以把人移出房間（例如名字不恰當）。</p>
+        <div class="actions"><button class="bigbtn" id="btnStart" type="button" disabled>開始遊戲</button></div>
+      </div>
+    </section>
+
+    <section class="view" id="vPlay" hidden>
+      <div class="boardcol">
+        <div class="classbar">全班已找到 <b id="classFound">0</b> 個晶片<div class="track"><i id="classFill"></i></div></div>
+        <div class="lb" id="lb"></div>
+        <div class="others" id="others"></div>
+      </div>
+      <aside class="sidecol">
+        <div class="minijoin"><div class="qr" id="qrSmall"></div><p>還沒加入的掃這裡</p><b id="codeSmall">----</b></div>
+        <p class="rule">找到晶片 <b>+100</b><br>點到沒有晶片的 <b>−30</b><br>最低 0 分，同分先到先贏</p>
+        <button class="bigbtn" id="btnEnd" type="button">結束遊戲</button>
+      </aside>
+    </section>
+
+    <section class="view" id="vEnd" hidden>
+      <h2>🏆 最後排名</h2>
+      <div class="podium" id="podium"></div>
+      <ol class="restlist" id="restList"></ol>
+      <div class="endactions">
+        <button class="ghost" id="btnBackBoard" type="button">回到排行榜</button>
+        <button class="bigbtn" id="btnNew" type="button">開新的一局</button>
+      </div>
+    </section>
+  </main>
+
+<script type="module">
+import { firebaseConfig } from "./firebase-config.js";
+
+const SDK = "https://www.gstatic.com/firebasejs/10.12.2/";
+const MAX_FOUND = 22, MAX_SCORE = 2200, TOP = 10;
+const $ = id => document.getElementById(id);
+const views = ["vSetup", "vLobby", "vPlay", "vEnd"];
+const showView = id => views.forEach(v => $(v).hidden = v !== id);
+const setup = (title, text) => { $("setupTitle").textContent = title; $("setupText").textContent = text; showView("vSetup"); };
+
+if (!firebaseConfig || !firebaseConfig.apiKey) {
+  setup("班級遊戲還沒設定好", "Firebase 的設定還沒放進 firebase-config.js，設定完成後重新整理這一頁。");
+} else {
+  main().catch(err => {
+    console.error(err);
+    setup("連不上資料庫", "請確認電腦有連上網路，再重新整理一次。（" + (err.code || err.message) + "）");
+  });
+}
+
+async function main() {
+  const [{ initializeApp }, A, D] = await Promise.all([
+    import(SDK + "firebase-app.js"), import(SDK + "firebase-auth.js"), import(SDK + "firebase-database.js"),
+  ]);
+  const app = initializeApp(firebaseConfig);
+  const { user } = await A.signInAnonymously(A.getAuth(app));
+  const db = D.getDatabase(app);
+  const metaRef = c => D.ref(db, `rooms/${c}/meta`);
+
+  let offset = 0;
+  D.onValue(D.ref(db, ".info/serverTimeOffset"), s => { offset = s.val() || 0; });
+
+  // 開房間：隨機 4 位數，撞到別人的就換一個；舊房間順手清掉
+  async function createRoom(old) {
+    for (let i = 0; i < 20; i++) {
+      const c = String(1000 + Math.floor(Math.random() * 9000));
+      try {
+        if ((await D.get(metaRef(c))).exists()) continue;
+        await D.set(metaRef(c), { owner: user.uid, state: "lobby", created: D.serverTimestamp() });
+        try { localStorage.setItem("nochip-teacher-room", c); } catch (e) {}
+        if (old) D.remove(D.ref(db, `rooms/${old}`)).catch(() => {});
+        return c;
+      } catch (e) { /* 被別人佔走，換下一個 */ }
+    }
+    throw new Error("開不了房間");
+  }
+
+  // 重新整理老師頁時，接回原本的房間
+  let code = null;
+  try { code = localStorage.getItem("nochip-teacher-room"); } catch (e) {}
+  if (code) {
+    const m = (await D.get(metaRef(code))).val();
+    if (!m || m.owner !== user.uid) code = null;
+  }
+  if (!code) code = await createRoom(null);
+
+  let meta = null, players = {}, unsub = null, qrFor = null;
+  const prevRank = {};
+
+  function watch(c) {
+    if (unsub) unsub();
+    code = c;
+    unsub = D.onValue(D.ref(db, `rooms/${c}`), snap => {
+      const r = snap.val() || {};
+      meta = r.meta || null;
+      players = r.players || {};
+      renderAll();
+    });
+  }
+
+  function joinUrl() { return new URL("./?room=" + code, location.href).href; }
+
+  function drawQr() {
+    if (qrFor === code) return;
+    qrFor = code;
+    const url = joinUrl();
+    let svg = "";
+    try {
+      const qr = qrcode(0, "M"); qr.addData(url); qr.make();
+      svg = qr.createSvgTag({ cellSize: 8, margin: 2, scalable: true });
+    } catch (e) { svg = ""; }
+    $("qrBig").innerHTML = svg; $("qrSmall").innerHTML = svg;
+    $("codeBig").textContent = code; $("codeSmall").textContent = code; $("roomCode").textContent = code;
+    $("urlText").textContent = "掃不到：打開 " + new URL("./", location.href).host + new URL("./", location.href).pathname + "，按「加入班級遊戲」輸入代碼";
+  }
+
+  function ranked() {
+    return Object.entries(players)
+      .map(([uid, p]) => ({ uid, name: String(p.name || "？"), score: +p.score || 0, found: +p.found || 0, t: +p.t || 0 }))
+      .sort((a, b) => b.score - a.score || a.t - b.t || a.name.localeCompare(b.name, "zh-Hant"));
+  }
+
+  function renderAll() {
+    if (!meta) { setup("房間不見了", "這個房間已經被清掉，重新整理會開一個新房間。"); return; }
+    drawQr();
+    const list = ranked();
+    $("nPlayers").textContent = list.length;
+    const st = meta.state;
+    $("clockPill").hidden = st === "lobby";
+    if (st === "lobby") { renderLobby(list); showView("vLobby"); }
+    else if (st === "playing") { renderBoard(list); showView("vPlay"); }
+    else { renderBoard(list); renderPodium(list); if (!endShownBoard) showView("vEnd"); }
+    tick();
+  }
+
+  // ── 等待區 ──
+  function renderLobby(list) {
+    $("nJoined").textContent = list.length;
+    $("btnStart").disabled = list.length === 0;
+    const box = $("names");
+    if (!list.length) { box.innerHTML = '<p class="empty">還沒有人加入，等學生掃碼…</p>'; return; }
+    const empty = box.querySelector(".empty"); if (empty) empty.remove();
+    const seen = new Set();
+    // 照加入順序排，新加入的跳出來
+    [...list].sort((a, b) => a.t - b.t).forEach(p => {
+      seen.add(p.uid);
+      let b = box.querySelector(`[data-uid="${p.uid}"]`);
+      if (!b) {
+        b = document.createElement("button");
+        b.type = "button"; b.className = "nm"; b.dataset.uid = p.uid;
+        b.onclick = () => {
+          if (confirm(`把「${b.textContent}」移出房間？`)) D.remove(D.ref(db, `rooms/${code}/players/${p.uid}`));
+        };
+        box.appendChild(b);
+      }
+      b.textContent = p.name;
+    });
+    box.querySelectorAll(".nm").forEach(b => { if (!seen.has(b.dataset.uid)) b.remove(); });
+  }
+
+  // ── 即時排行榜：每一列用位移動畫換位置 ──
+  const rows = {};
+  function renderBoard(list) {
+    const rowH = Math.round(Math.max(44, Math.min(78, (window.innerHeight - 190) / TOP)));
+    document.documentElement.style.setProperty("--rowH", rowH + "px");
+    const lb = $("lb");
+    const shown = Math.min(list.length, TOP);
+    lb.style.height = (shown * rowH) + "px";
+    if (!list.length) { lb.innerHTML = '<p class="waiting">還沒有人加入</p>'; return; }
+    const wait = lb.querySelector(".waiting"); if (wait) wait.remove();
+
+    const top = Math.max(list[0].score, 300);
+    const totalFound = list.reduce((s, p) => s + p.found, 0);
+    $("classFound").textContent = totalFound;
+    $("classFill").style.width = (totalFound / (MAX_FOUND * list.length) * 100) + "%";
+
+    const present = new Set();
+    list.forEach((p, i) => {
+      present.add(p.uid);
+      let r = rows[p.uid];
+      if (!r) {
+        r = document.createElement("div");
+        r.className = "row";
+        r.innerHTML = '<div class="rk"></div><div class="who"></div><div class="bar"><i></i></div><div class="pts"></div><div class="fd"></div>';
+        r.style.transform = `translateY(${shown * rowH}px)`;
+        lb.appendChild(r);
+        rows[p.uid] = r;
+        void r.offsetWidth;
+      }
+      r.querySelector(".rk").textContent = i + 1;
+      r.querySelector(".who").textContent = p.name;
+      r.querySelector(".bar i").style.width = (p.score / top * 100) + "%";
+      r.querySelector(".pts").textContent = p.score;
+      r.querySelector(".fd").textContent = `🔌 ${p.found}/${MAX_FOUND}`;
+      r.className = "row" + (i < 3 ? " r" + (i + 1) : "") + (i >= TOP ? " gone" : "");
+      if (i < TOP) r.style.transform = `translateY(${i * rowH}px)`;
+      if (prevRank[p.uid] !== undefined && i < prevRank[p.uid] && i < TOP) {
+        r.classList.add("up");
+        setTimeout(() => r.classList.remove("up"), 900);
+      }
+      prevRank[p.uid] = i;
+    });
+    Object.keys(rows).forEach(uid => { if (!present.has(uid)) { rows[uid].remove(); delete rows[uid]; delete prevRank[uid]; } });
+
+    $("others").innerHTML = list.slice(TOP).map((p, j) =>
+      `<span>${TOP + j + 1}<b>${esc(p.name)}</b>${p.score}</span>`).join("");
+  }
+
+  // ── 頒獎台：第三名先上台，最後才揭曉第一名 ──
+  let podiumKey = "";
+  function renderPodium(list) {
+    const key = list.slice(0, 3).map(p => p.uid + ":" + p.score).join("|") + "#" + list.length;
+    if (key !== podiumKey) {
+      podiumKey = key;
+      const slot = (p, cls, medal, delay) => p
+        ? `<div class="pcol ${cls}" style="animation-delay:${delay}s"><div class="medal">${medal}</div><div class="pname">${esc(p.name)}</div><div class="block"><span class="ps">${p.score}</span><span class="pf">找到 ${p.found} 個晶片</span></div></div>`
+        : `<div class="pcol ${cls} empty" style="animation-delay:${delay}s"><div class="block"></div></div>`;
+      $("podium").innerHTML = slot(list[1], "p2", "🥈", 1.0) + slot(list[0], "p1", "🥇", 1.9) + slot(list[2], "p3", "🥉", 0.2);
+    }
+    $("restList").innerHTML = list.slice(3).map((p, j) =>
+      `<li><span class="n">${j + 4}</span><span>${esc(p.name)}</span><span class="s">${p.score}</span></li>`).join("");
+  }
+
+  // ── 計時 ──
+  function tick() {
+    if (!meta || !meta.startedAt) { $("clock").textContent = "00:00"; return; }
+    const end = meta.state === "ended" && meta.endedAt ? meta.endedAt : Date.now() + offset;
+    const s = Math.max(0, Math.floor((end - meta.startedAt) / 1000));
+    $("clock").textContent = String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0");
+  }
+  setInterval(tick, 1000);
+  window.addEventListener("resize", () => { if (meta && meta.state !== "lobby") renderBoard(ranked()); });
+
+  // ── 按鈕 ──
+  let endShownBoard = false;
+  $("btnStart").onclick = () => D.update(metaRef(code), { state: "playing", startedAt: D.serverTimestamp() });
+  $("btnEnd").onclick = () => {
+    if (confirm("確定要結束遊戲？結束後學生就不能再點了。")) {
+      endShownBoard = false;
+      D.update(metaRef(code), { state: "ended", endedAt: D.serverTimestamp() });
+    }
+  };
+  $("btnBackBoard").onclick = () => { endShownBoard = true; showView("vPlay"); $("btnEnd").hidden = true; };
+  $("btnNew").onclick = async () => {
+    if (!confirm("開新的一局會換一個新的房間代碼，學生要重新掃 QR code。確定嗎？")) return;
+    Object.keys(rows).forEach(uid => { rows[uid].remove(); delete rows[uid]; delete prevRank[uid]; });
+    podiumKey = ""; endShownBoard = false; $("btnEnd").hidden = false;
+    $("names").innerHTML = "";
+    watch(await createRoom(code));
+  };
+
+  watch(code);
+}
+
+function esc(t) {
+  return String(t).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+</script>
+</body>
+</html>

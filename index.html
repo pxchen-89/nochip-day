@@ -229,6 +229,7 @@
     <h1>沒有晶片的一天<small>點掉你覺得「裡面有晶片」的東西，看看會發生什麼事</small></h1>
     <div class="tools">
       <button id="btnReveal" type="button">顯示答案</button>
+      <button id="btnJoin" type="button">加入班級遊戲</button>
       <button id="btnReset" type="button">重新開始</button>
     </div>
   </header>
@@ -949,7 +950,8 @@ let cur = 0;
 let state = SCENES.map(s => s.items.map(() => 0));   // 0=沒點 1=找到晶片 2=檢查過沒晶片
 let firstTryOK = 0, firstTryTotal = 0;               // 統計：第一次點就點到有晶片的比例
 
-const SAVE_KEY = "nochip-day-v1";
+const ROOM = (new URLSearchParams(location.search).get("room") || "").replace(/\D/g, "").slice(0, 4);
+const SAVE_KEY = "nochip-day-v1" + (ROOM.length === 4 ? "-room" + ROOM : "");
 if(/[?&#]teacher/.test(location.search + location.hash)) document.body.classList.add("teacher");
 function save(){
   try{ localStorage.setItem(SAVE_KEY, JSON.stringify({state, cur, firstTryOK, firstTryTotal})); }catch(e){}
@@ -965,6 +967,14 @@ function load(){
     firstTryOK = d.firstTryOK | 0; firstTryTotal = d.firstTryTotal | 0;
   }catch(e){}
 }
+
+function scoreInfo(){
+  let found = 0, wrong = 0;
+  state.forEach(arr => arr.forEach(v => { if(v === 1) found++; else if(v === 2) wrong++; }));
+  return { found, wrong, score: Math.max(0, found * 100 - wrong * 30) };
+}
+// 給班級競賽模式（mp-student.js）用的接口
+window.mpGame = { scoreInfo, reset: () => reset(), room: ROOM };
 
 const px = v => (v / 1600 * 100) + "%";
 const py = v => (v / 900 * 100) + "%";
@@ -1041,7 +1051,7 @@ function markBroken(stage,it,on){
 }
 
 function tap(el,k,stage){
-  if(state[cur][k]) return;
+  if(window.mpLocked || state[cur][k]) return;
   const it = SCENES[cur].items[k];
   firstTryTotal++;
   if(it.chip){
@@ -1059,6 +1069,7 @@ function tap(el,k,stage){
   el.blur();
   showMsg(it);
   save();
+  if(window.mpOnTap) window.mpOnTap(it);
   setTimeout(() => { updateProgress(); updateDownbar(); }, 60);
   buildNav();
 }
@@ -1143,11 +1154,17 @@ function openFinal(){
   document.querySelectorAll("#final .stat").forEach((el,i) => el.style.animationDelay = (0.15 + i * 0.08) + "s");
   $("#final").classList.add("show");
   $("#final").scrollTop = 0;
+  if(window.mpOnFinal) window.mpOnFinal();
 }
 
 $("#btnBack").onclick = () => $("#final").classList.remove("show");
 $("#btnReplay").onclick = () => { reset(); $("#final").classList.remove("show"); };
 $("#btnReset").onclick = reset;
+$("#btnJoin").onclick = () => {
+  const code = (prompt("請輸入投影幕上的 4 位數房間代碼") || "").replace(/\D/g, "");
+  if(code.length === 4) location.search = "?room=" + code;
+  else if(code) alert("房間代碼是 4 位數字，請再看一次投影幕。");
+};
 function reset(){
   state = SCENES.map(s => s.items.map(() => 0));
   firstTryOK = 0; firstTryTotal = 0;
@@ -1164,5 +1181,6 @@ document.addEventListener("keydown", e => {
 load();
 render();
 </script>
+<script type="module" src="mp-student.js"></script>
 </body>
 </html>
