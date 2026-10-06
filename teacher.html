@@ -78,60 +78,61 @@
   /* ── 排行榜 ── */
   #vPlay{display:grid;grid-template-columns:minmax(0,1fr) clamp(170px,16vw,240px);gap:clamp(14px,2vw,28px);min-height:0}
   .boardcol{display:flex;flex-direction:column;min-height:0}
-  .classbar{display:flex;align-items:center;gap:16px;margin-bottom:14px;font-size:clamp(15px,1.4vw,20px);color:var(--muted)}
+  .classbar{display:flex;align-items:center;gap:16px;margin-bottom:14px;font-size:clamp(18px,1.9vw,28px);color:var(--muted)}
   .classbar b{color:var(--text);font-size:1.4em;font-variant-numeric:tabular-nums}
   .track{flex:1;height:12px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden}
   .track i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--hot));border-radius:999px;transition:width .6s}
   .lb{position:relative;flex:none}
   .row{
     position:absolute;left:0;right:0;top:0;height:calc(var(--rowH) - 8px);
-    display:grid;grid-template-columns:calc(var(--rowH) - 8px) minmax(6em,13em) minmax(0,1fr) 5.2em 4.6em;align-items:center;gap:14px;
+    display:grid;grid-template-columns:calc(var(--rowH) - 8px) calc(var(--rowH) * 3.6) minmax(0,1fr) calc(var(--rowH) * 1.5) calc(var(--rowH) * 1.8);align-items:center;gap:calc(var(--rowH) * .2);
     background:var(--panel);border:1px solid var(--line);border-radius:14px;padding-right:16px;
     transition:transform .7s cubic-bezier(.25,.9,.3,1),opacity .4s,background .4s;
   }
-  .row .rk{height:100%;display:grid;place-items:center;border-radius:13px 0 0 13px;background:rgba(255,255,255,.06);font-weight:900;font-size:calc(var(--rowH) * .38);font-variant-numeric:tabular-nums}
+  .row .rk{height:100%;display:grid;place-items:center;border-radius:13px 0 0 13px;background:rgba(255,255,255,.06);font-weight:900;font-size:calc(var(--rowH) * .46);font-variant-numeric:tabular-nums}
   .row.r1 .rk{background:var(--gold);color:#3a2a00}
   .row.r2 .rk{background:var(--silver);color:#2a2f38}
   .row.r3 .rk{background:var(--bronze);color:#3a2210}
-  .row .who{font-weight:900;font-size:calc(var(--rowH) * .36);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .row .who{font-weight:900;font-size:calc(var(--rowH) * .44);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .row .bar{height:calc(var(--rowH) * .3);border-radius:999px;background:rgba(255,255,255,.06);overflow:hidden}
   .row .bar i{display:block;height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,var(--accent),var(--hot));transition:width .7s cubic-bezier(.25,.9,.3,1)}
-  .row .pts{text-align:right;font-weight:900;font-size:calc(var(--rowH) * .4);font-variant-numeric:tabular-nums}
-  .row .fd{text-align:right;color:var(--muted);font-size:calc(var(--rowH) * .26);font-variant-numeric:tabular-nums;white-space:nowrap}
+  .row .pts{text-align:right;font-weight:900;font-size:calc(var(--rowH) * .5);font-variant-numeric:tabular-nums}
+  .row .fd{text-align:right;color:var(--muted);font-size:calc(var(--rowH) * .32);font-variant-numeric:tabular-nums;white-space:nowrap}
   .row.up{background:#3a2a1c;border-color:var(--accent)}
   .row.gone{opacity:0;pointer-events:none}
   .others{margin-top:6px;display:flex;flex-wrap:wrap;gap:8px;overflow:auto;min-height:0}
-  .others span{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:5px 12px;font-size:clamp(13px,1.15vw,16px);color:var(--muted)}
+  .others span{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:6px 14px;font-size:clamp(16px,1.5vw,22px);color:var(--muted)}
   .others span b{color:var(--text);margin:0 6px}
   .waiting{color:var(--muted);font-size:20px;padding:20px 0}
   .sidecol{display:flex;flex-direction:column;gap:14px;align-items:stretch}
   .minijoin{background:#fff;color:#1c1526;border-radius:20px;padding:14px;text-align:center}
   .minijoin .qr{width:100%;aspect-ratio:1}
   .minijoin .qr svg{width:100%;height:100%;display:block}
-  .minijoin p{margin:6px 0 0;font-size:14px;color:#5b5266}
+  .minijoin p{margin:6px 0 0;font-size:16px;color:#5b5266}
   .minijoin b{display:block;font-size:clamp(26px,2.6vw,38px);letter-spacing:.14em;color:#1c1526;font-variant-numeric:tabular-nums}
   .sidecol .bigbtn{padding:14px 18px;font-size:clamp(16px,1.5vw,22px);background:var(--hot)}
-  .rule{color:var(--muted);font-size:13px;line-height:1.7;margin:0}
+  .rule{color:var(--muted);font-size:clamp(15px,1.25vw,19px);line-height:1.7;margin:0}
   .rule b{color:var(--text)}
 
   /* ── 頒獎台 ── */
   #vEnd{display:flex;flex-direction:column;min-height:0}
-  #vEnd h2{text-align:center;margin:0 0 4px;font-size:clamp(24px,2.8vw,40px);letter-spacing:.06em}
+  #vEnd h2{text-align:center;margin:0 0 4px;font-size:clamp(30px,3.6vw,56px);letter-spacing:.06em}
   .podium{flex:1;min-height:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(10px,1.6vw,24px);align-items:end;max-width:1000px;width:100%;margin:0 auto;padding-top:10px}
   .pcol{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;opacity:0;transform:translateY(40px);animation:rise .8s cubic-bezier(.2,1.2,.4,1) forwards}
-  .pcol .pname{font-weight:900;font-size:clamp(20px,2.4vw,36px);text-align:center;margin-bottom:8px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .pcol .medal{font-size:clamp(34px,4vw,60px);line-height:1}
-  .pcol .block{width:100%;border-radius:18px 18px 0 0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:16px;font-weight:900}
-  .pcol .block .ps{font-size:clamp(26px,3vw,46px);font-variant-numeric:tabular-nums}
-  .pcol .block .pf{font-size:clamp(13px,1.2vw,17px);font-weight:400;opacity:.8}
-  .p1 .block{height:62%;background:linear-gradient(180deg,var(--gold),#e6a83c);color:#3a2a00}
-  .p2 .block{height:46%;background:linear-gradient(180deg,var(--silver),#9aa6ba);color:#2a2f38}
-  .p3 .block{height:34%;background:linear-gradient(180deg,var(--bronze),#b8733f);color:#3a2210}
+  .pcol .pname{font-weight:900;font-size:clamp(30px,3.8vw,64px);text-align:center;margin-bottom:8px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .pcol .medal{font-size:clamp(46px,5.4vw,90px);line-height:1}
+  .pcol .block{width:100%;border-radius:18px 18px 0 0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:clamp(12px,2vh,24px);font-weight:900}
+  .pcol .block .ps{font-size:clamp(38px,4.4vw,76px);line-height:1.1;font-variant-numeric:tabular-nums}
+  .pcol .block .pf{font-size:clamp(16px,1.7vw,26px);font-weight:400;opacity:.8}
+  .p1 .block{height:62%;min-height:clamp(170px,30vh,300px);background:linear-gradient(180deg,var(--gold),#e6a83c);color:#3a2a00}
+  .p2 .block{height:46%;min-height:clamp(140px,24vh,240px);background:linear-gradient(180deg,var(--silver),#9aa6ba);color:#2a2f38}
+  .p3 .block{height:34%;min-height:clamp(120px,19vh,190px);background:linear-gradient(180deg,var(--bronze),#b8733f);color:#3a2210}
   .pcol.empty .block{background:rgba(255,255,255,.06);color:var(--muted)}
   @keyframes rise{to{opacity:1;transform:none}}
-  .restlist{list-style:none;margin:14px auto 0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px;max-width:1100px;width:100%;max-height:22vh;overflow:auto}
-  .restlist li{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:8px 14px;display:flex;gap:10px;font-size:clamp(14px,1.25vw,17px)}
+  .restlist{list-style:none;margin:14px auto 0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:8px;max-width:1400px;width:100%;max-height:22vh;overflow:auto}
+  .restlist li{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:8px 16px;display:flex;align-items:baseline;gap:12px;font-size:clamp(18px,1.6vw,26px);font-weight:700;white-space:nowrap}
   .restlist .n{color:var(--muted);font-variant-numeric:tabular-nums;min-width:2em}
+  .restlist li span:nth-child(2){overflow:hidden;text-overflow:ellipsis}
   .restlist .s{margin-left:auto;font-weight:700;font-variant-numeric:tabular-nums}
   .endactions{display:flex;justify-content:center;gap:12px;margin-top:14px}
 
@@ -140,7 +141,7 @@
     #vPlay{grid-template-columns:1fr}
     #vLobby{flex-direction:column;--qr:min(92vw,60vh)}
     .lobbyside{height:auto;width:100%}
-    .row{grid-template-columns:calc(var(--rowH) - 8px) minmax(4em,1fr) 4.6em 4em;}
+    .row{grid-template-columns:calc(var(--rowH) - 8px) minmax(0,1fr) calc(var(--rowH) * 1.5) calc(var(--rowH) * 1.8);}
     .row .bar{display:none}
   }
   @media (prefers-reduced-motion:reduce){
@@ -206,7 +207,7 @@
 import { firebaseConfig } from "./firebase-config.js";
 
 const SDK = "https://www.gstatic.com/firebasejs/10.12.2/";
-const MAX_FOUND = 22, MAX_SCORE = 2200, TOP = 10;
+const MAX_FOUND = 22, MAX_SCORE = 2200, TOP = 8;
 const $ = id => document.getElementById(id);
 const views = ["vSetup", "vLobby", "vPlay", "vEnd"];
 const showView = id => views.forEach(v => $(v).hidden = v !== id);
@@ -302,7 +303,7 @@ async function main() {
     const st = meta.state;
     $("clockPill").hidden = st === "lobby";
     if (st === "lobby") { renderLobby(list); showView("vLobby"); }
-    else if (st === "playing") { renderBoard(list); showView("vPlay"); }
+    else if (st === "playing") { showView("vPlay"); renderBoard(list); }
     else { renderBoard(list); renderPodium(list); if (!endShownBoard) showView("vEnd"); }
     tick();
   }
@@ -335,9 +336,11 @@ async function main() {
   // ── 即時排行榜：每一列用位移動畫換位置 ──
   const rows = {};
   function renderBoard(list) {
-    const rowH = Math.round(Math.max(44, Math.min(78, (window.innerHeight - 190) / TOP)));
-    document.documentElement.style.setProperty("--rowH", rowH + "px");
     const lb = $("lb");
+    const lbTop = lb.offsetParent ? lb.getBoundingClientRect().top : 130;
+    const othersH = list.length > TOP ? 56 : 0;
+    const rowH = Math.round(Math.max(48, Math.min(120, (window.innerHeight - lbTop - othersH - 22) / Math.max(Math.min(list.length, TOP), 6))));
+    document.documentElement.style.setProperty("--rowH", rowH + "px");
     const shown = Math.min(list.length, TOP);
     lb.style.height = (shown * rowH) + "px";
     if (!list.length) { lb.innerHTML = '<p class="waiting">還沒有人加入</p>'; return; }
