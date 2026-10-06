@@ -71,7 +71,7 @@
     border:1px solid rgba(255,255,255,.1);
   }
   .stage svg.art{position:absolute;inset:0;width:100%;height:100%;display:block}
-  .art .broken{opacity:.22;filter:grayscale(1);transition:opacity .55s,filter .55s}
+  .art [id^="g-"].broken{opacity:.22;filter:grayscale(1);transition:opacity .55s,filter .55s}
   .art .ruler{opacity:.45}
   .art [id^="g-"]{filter:url(#ol)}
 
@@ -363,10 +363,15 @@ const ART_ROOM = `
   </g>
 
   <g id="g-ac">
-    <rect x="400" y="26" width="234" height="78" rx="14" fill="#f3ede3"/>
-    <rect x="400" y="26" width="234" height="26" rx="13" fill="#fffaf2"/>
-    <rect x="414" y="84" width="206" height="12" rx="6" fill="#cdc3b4"/>
-    <circle cx="606" cy="46" r="6" fill="#7ad1a0"/>
+    <rect x="400" y="26" width="234" height="78" rx="14" fill="#f6f3ee"/>
+    <rect x="400" y="26" width="234" height="22" rx="11" fill="#ffffff"/>
+    <path d="M412 84 h210 l-10 14 h-190 z" fill="#c9c3b8"/>
+    <rect x="584" y="40" width="38" height="18" rx="3" fill="#2f3a44"/>
+    <text x="603" y="54" fill="#7fe0ff" font-size="13" font-weight="700" text-anchor="middle" font-family="'Noto Sans TC',sans-serif">26°</text>
+    <circle cx="420" cy="46" r="4" fill="#7ad1a0"/>
+    <g stroke="#6fb8e6" stroke-width="5" fill="none" stroke-linecap="round">
+      <path d="M445 112 q14 11 0 22 q-14 11 0 22"/><path d="M517 112 q14 11 0 22 q-14 11 0 22"/><path d="M589 112 q14 11 0 22 q-14 11 0 22"/>
+    </g>
   </g>
 
   <g id="g-poster">
@@ -402,11 +407,17 @@ const ART_ROOM = `
   </g>
 
   <g id="g-chair">
-    <rect x="1230" y="429" width="14" height="104" rx="6" fill="#2f3a47"/>
-    <rect x="1120" y="429" width="124" height="34" rx="8" fill="#46586e"/>
-    <rect x="1100" y="533" width="150" height="16" rx="7" fill="#46586e"/>
-    <rect x="1112" y="549" width="14" height="101" rx="5" fill="#2f3a47"/>
-    <rect x="1224" y="549" width="14" height="101" rx="5" fill="#2f3a47"/>
+    <rect x="1060" y="425" width="16" height="225" rx="6" fill="#2f3a47"/>
+    <rect x="1062" y="430" width="24" height="94" rx="9" fill="#46586e"/>
+    <rect x="1060" y="526" width="130" height="18" rx="8" fill="#46586e"/>
+    <rect x="1170" y="544" width="14" height="106" rx="5" fill="#2f3a47"/>
+  </g>
+  <g id="g-btspk">
+    <text x="1132" y="410" font-size="26" fill="#2f6f9f" font-family="'Noto Sans TC',sans-serif">♪</text>
+    <text x="1158" y="396" font-size="22" fill="#2f6f9f" font-family="'Noto Sans TC',sans-serif">♫</text>
+    <rect x="1126" y="424" width="54" height="31" rx="11" fill="#2f6f9f"/>
+    <circle cx="1142" cy="440" r="10" fill="#1c3f5c"/><circle cx="1164" cy="440" r="10" fill="#1c3f5c"/>
+    <circle cx="1142" cy="440" r="4" fill="#7fb8e6"/><circle cx="1164" cy="440" r="4" fill="#7fb8e6"/>
   </g>
 
   <g id="g-fan">
@@ -508,6 +519,7 @@ const ART_STREET = `
     <rect x="386" y="184" width="48" height="16" rx="4" fill="#2b2f33"/>
     <circle cx="424" cy="192" r="3" fill="#e5483f"/>
     <text x="410" y="300" fill="#2f5566" font-size="20" text-anchor="middle" font-family="'Noto Sans TC',sans-serif">自動門</text>
+    <path d="M398 340 h-46 m14 -12 l-14 12 14 12 M422 340 h46 m-14 -12 l14 12 -14 12" stroke="#2f5566" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
   </g>
 
   <!-- 路口號誌：懸臂上的橫式紅黃綠燈＋桿子上的行人號誌 -->
@@ -588,7 +600,9 @@ const ART_STREET = `
     <rect x="1232" y="250" width="16" height="630" fill="#6b7178"/>
     <rect x="1177" y="250" width="126" height="68" rx="4" fill="#f4f4f0"/>
     <rect x="1177" y="250" width="126" height="20" rx="4" fill="#1f5fa8"/>
-    <text x="1240" y="266" fill="#fff" font-size="14" font-weight="700" text-anchor="middle" font-family="'Noto Sans TC',sans-serif">公車站</text>
+    <g fill="#fff"><rect x="1188" y="253" width="26" height="12" rx="3"/><circle cx="1194" cy="266" r="2.6"/><circle cx="1208" cy="266" r="2.6"/></g>
+    <rect x="1191" y="255" width="20" height="5" fill="#1f5fa8"/>
+    <text x="1256" y="266" fill="#fff" font-size="14" font-weight="700" text-anchor="middle" font-family="'Noto Sans TC',sans-serif">公車站</text>
     <text x="1240" y="304" fill="#1f3f6b" font-size="24" font-weight="900" text-anchor="middle" font-family="'Noto Sans TC',sans-serif">好好國小</text>
     <rect x="1177" y="324" width="126" height="96" rx="4" fill="#24292e"/>
     <rect x="1185" y="332" width="110" height="80" rx="2" fill="#0b0c0d"/>
@@ -639,20 +653,34 @@ const ART_CLASS = `
     <rect x="620" y="150" width="400" height="18" rx="6" fill="#8a8579"/>
     <rect x="620" y="168" width="400" height="300" fill="#f0eee6"/>
     <rect x="620" y="462" width="400" height="12" rx="5" fill="#c9c4b6"/>
+    <path d="M820 474 v12" stroke="#8a8579" stroke-width="3"/><circle cx="820" cy="490" r="5" fill="#8a8579"/>
   </g>
 
   <g id="g-proj">
-    <rect x="806" y="100" width="12" height="58" fill="#8a8579"/>
-    <rect x="777" y="158" width="70" height="26" rx="6" fill="#c3beb2"/>
-    <circle cx="847" cy="171" r="9" fill="#8fb6c4"/>
-    <circle cx="789" cy="166" r="4" fill="#7ad1a0"/>
+    <path d="M806 190 L830 190 L992 438 L648 438 Z" fill="#fff6c9" opacity=".18"/>
+    <rect x="652" y="200" width="336" height="234" fill="#fdfcf8"/>
+    <rect x="652" y="200" width="336" height="42" fill="#2f6f9f"/>
+    <text x="820" y="230" fill="#fff" font-size="24" font-weight="900" text-anchor="middle" font-family="'Noto Sans TC',sans-serif">今天的課</text>
+    <rect x="690" y="330" width="40" height="84" fill="#ffb35c"/><rect x="748" y="296" width="40" height="118" fill="#5fb37a"/><rect x="806" y="350" width="40" height="64" fill="#5f9fd6"/>
+    <path d="M876 286 h86 M876 308 h72 M876 330 h86 M876 352 h56" stroke="#9aa1a6" stroke-width="6"/>
+    <rect x="806" y="100" width="12" height="54" fill="#7a756b"/>
+    <rect x="770" y="152" width="84" height="36" rx="7" fill="#c3beb2"/>
+    <rect x="770" y="152" width="84" height="11" rx="5" fill="#d8d3c7"/>
+    <circle cx="836" cy="172" r="12" fill="#2c3138"/><circle cx="836" cy="172" r="6" fill="#7fb8d6"/>
+    <circle cx="784" cy="166" r="3" fill="#7ad1a0"/>
+    <path d="M788 177 h22 M788 182 h22" stroke="#9c968a" stroke-width="2"/>
   </g>
 
   <g id="g-cac">
-    <rect x="160" y="160" width="180" height="60" rx="12" fill="#f3ede3"/>
-    <rect x="160" y="160" width="180" height="20" rx="10" fill="#fffaf2"/>
-    <rect x="172" y="204" width="156" height="10" rx="5" fill="#cdc3b4"/>
-    <circle cx="322" cy="174" r="5" fill="#7ad1a0"/>
+    <rect x="160" y="160" width="180" height="60" rx="12" fill="#f6f3ee"/>
+    <rect x="160" y="160" width="180" height="18" rx="9" fill="#ffffff"/>
+    <path d="M170 204 h160 l-8 12 h-144 z" fill="#c9c3b8"/>
+    <rect x="294" y="170" width="32" height="15" rx="3" fill="#2f3a44"/>
+    <text x="310" y="182" fill="#7fe0ff" font-size="11" font-weight="700" text-anchor="middle" font-family="'Noto Sans TC',sans-serif">26°</text>
+    <circle cx="176" cy="174" r="4" fill="#7ad1a0"/>
+    <g stroke="#6fb8e6" stroke-width="4" fill="none" stroke-linecap="round">
+      <path d="M200 226 q10 6 0 12 q-10 6 0 12"/><path d="M250 226 q10 6 0 12 q-10 6 0 12"/><path d="M300 226 q10 6 0 12 q-10 6 0 12"/>
+    </g>
   </g>
 
 
@@ -668,31 +696,36 @@ const ART_CLASS = `
 
   <!-- 廣播喇叭（木箱）：0.38 x 0.27 m，掛在牆角高處 -->
   <g id="g-speaker">
-    <path d="M1324 124 v-14" stroke="#8a8579" stroke-width="4"/>
-    <rect x="1286" y="124" width="76" height="54" rx="4" fill="#9b7652"/>
-    <rect x="1294" y="132" width="60" height="38" rx="3" fill="#4f3d2b"/>
-    <path d="M1294 140 h60 M1294 148 h60 M1294 156 h60 M1294 164 h60" stroke="#7d6248" stroke-width="2"/>
+    <path d="M1324 120 v-12" stroke="#7a756b" stroke-width="4"/>
+    <rect x="1282" y="120" width="84" height="62" rx="5" fill="#9b7652"/>
+    <rect x="1290" y="128" width="68" height="46" rx="3" fill="#3d2f22"/>
+    <circle cx="1314" cy="151" r="16" fill="#6b5743"/><circle cx="1314" cy="151" r="7" fill="#221a13"/>
+    <circle cx="1345" cy="142" r="8" fill="#6b5743"/><circle cx="1345" cy="142" r="3" fill="#221a13"/>
+    <g stroke="#9b7652" stroke-width="3" fill="none" stroke-linecap="round"><path d="M1374 138 q8 13 0 26"/><path d="M1386 131 q13 20 0 40"/></g>
   </g>
 
   <!-- 吊扇：葉片展開 1.4 m，從天花板垂下 -->
   <g id="g-cfan">
-    <rect x="1148" y="96" width="24" height="10" rx="3" fill="#a39d90"/>
-    <rect x="1156" y="100" width="8" height="80" fill="#8a8579"/>
-    <path d="M1126 196 L1022 204 Q1018 208 1024 210 L1128 204 Z" fill="#a8a296"/>
-    <path d="M1194 196 L1298 204 Q1302 208 1296 210 L1192 204 Z" fill="#a8a296"/>
-    <ellipse cx="1160" cy="190" rx="34" ry="14" fill="#b9b3a6"/>
-    <ellipse cx="1160" cy="203" rx="14" ry="5" fill="#bdb6a6"/>
+    <rect x="1148" y="96" width="24" height="10" rx="3" fill="#7a756b"/>
+    <rect x="1155" y="100" width="10" height="74" fill="#7a756b"/>
+    <path d="M1124 186 L1010 194 Q1002 202 1012 206 L1126 200 Z" fill="#8f8a7f"/>
+    <path d="M1196 186 L1310 194 Q1318 202 1308 206 L1194 200 Z" fill="#8f8a7f"/>
+    <ellipse cx="1160" cy="184" rx="40" ry="18" fill="#a39d90"/>
+    <ellipse cx="1160" cy="202" rx="16" ry="7" fill="#7a756b"/>
+    <g stroke="#a39d90" stroke-width="3" fill="none" stroke-linecap="round">
+      <path d="M1040 222 q120 26 240 0"/><path d="M1076 236 q84 16 168 0"/>
+    </g>
   </g>
 
   <g id="g-notice">
-    <rect x="60" y="280" width="280" height="180" rx="6" fill="#8a6440"/>
-    <rect x="72" y="292" width="256" height="156" fill="#c49a6c"/>
+    <rect x="60" y="262" width="280" height="180" rx="6" fill="#8a6440"/>
+    <rect x="72" y="274" width="256" height="156" fill="#c49a6c"/>
     <g fill="#efe9d6">
-      <rect x="92" y="312" width="64" height="46" rx="2" transform="rotate(-3 124 335)"/>
-      <rect x="176" y="318" width="58" height="42" rx="2" transform="rotate(2 205 339)"/>
-      <rect x="252" y="310" width="56" height="50" rx="2" transform="rotate(-2 280 335)"/>
-      <rect x="110" y="378" width="76" height="44" rx="2" transform="rotate(1 148 400)"/>
-      <rect x="212" y="382" width="88" height="40" rx="2" transform="rotate(-2 256 402)"/>
+      <rect x="92" y="294" width="64" height="46" rx="2" transform="rotate(-3 124 317)"/>
+      <rect x="176" y="300" width="58" height="42" rx="2" transform="rotate(2 205 321)"/>
+      <rect x="252" y="292" width="56" height="50" rx="2" transform="rotate(-2 280 317)"/>
+      <rect x="110" y="360" width="76" height="44" rx="2" transform="rotate(1 148 382)"/>
+      <rect x="212" y="364" width="88" height="40" rx="2" transform="rotate(-2 256 384)"/>
     </g>
   </g>
 
@@ -703,14 +736,20 @@ const ART_CLASS = `
   </g>
 
   <g id="g-podium">
-    <rect x="1210" y="540" width="240" height="160" rx="6" fill="#a5774f"/>
-    <rect x="1210" y="540" width="240" height="16" rx="6" fill="#c48d63"/>
+    <path d="M1202 540 L1218 524 H1442 L1458 540 Z" fill="#d1a272"/>
+    <rect x="1202" y="540" width="256" height="160" rx="4" fill="#a5774f"/>
+    <rect x="1222" y="562" width="216" height="118" rx="4" fill="#8f6440"/>
+    <circle cx="1330" cy="621" r="24" fill="#d9b27a"/>
+    <text x="1330" y="630" font-size="24" font-weight="900" text-anchor="middle" fill="#8f6440" font-family="'Noto Sans TC',sans-serif">校</text>
   </g>
   <g id="g-pc">
-    <rect x="1270" y="478" width="100" height="62" rx="6" fill="#2c3138"/>
-    <rect x="1278" y="486" width="84" height="46" rx="3" fill="#5f8fa8"/>
-    <rect x="1312" y="540" width="16" height="12" fill="#2c3138"/>
-    <rect x="1290" y="552" width="60" height="8" rx="4" fill="#2c3138"/>
+    <rect x="1268" y="460" width="104" height="66" rx="6" fill="#2c3138"/>
+    <rect x="1275" y="467" width="90" height="50" rx="3" fill="#4f8fc0"/>
+    <rect x="1283" y="474" width="46" height="30" rx="2" fill="#f4f6f8"/>
+    <rect x="1283" y="474" width="46" height="7" fill="#2f6f9f"/>
+    <rect x="1275" y="511" width="90" height="6" fill="#1f3550"/>
+    <rect x="1314" y="526" width="12" height="6" fill="#2c3138"/>
+    <rect x="1296" y="530" width="48" height="5" rx="2" fill="#2c3138"/>
   </g>
 
   <g id="g-cabinet">
@@ -719,10 +758,14 @@ const ART_CLASS = `
     <line x1="240" y1="554" x2="240" y2="700" stroke="#87693f" stroke-width="4"/>
   </g>
   <g id="g-printer">
-    <rect x="180" y="470" width="90" height="70" rx="8" fill="#dcd7c9"/>
-    <rect x="192" y="456" width="66" height="18" rx="4" fill="#f4f1e8"/>
-    <rect x="192" y="510" width="66" height="10" rx="4" fill="#8e887c"/>
-    <circle cx="256" cy="486" r="5" fill="#6fbf8f"/>
+    <rect x="192" y="444" width="68" height="38" rx="2" fill="#ffffff" stroke="#c9c3b6" stroke-width="2"/>
+    <path d="M200 452 h50 M200 460 h42 M200 468 h48" stroke="#9aa1a6" stroke-width="3"/>
+    <path d="M174 482 L186 470 H266 L278 482 Z" fill="#e9e6df"/>
+    <rect x="172" y="482" width="108" height="54" rx="7" fill="#d9d5cc"/>
+    <rect x="186" y="508" width="80" height="8" rx="3" fill="#6f6a61"/>
+    <rect x="192" y="514" width="68" height="24" fill="#ffffff" stroke="#c9c3b6" stroke-width="2"/>
+    <rect x="236" y="490" width="24" height="10" rx="2" fill="#3d4651"/>
+    <circle cx="268" cy="495" r="4" fill="#6fbf8f"/>
   </g>
 
   <g id="g-desks">
@@ -750,7 +793,7 @@ const ART_CLASS = `
     <rect x="700" y="822" width="12" height="78" fill="#3f4a56"/><rect x="808" y="822" width="12" height="78" fill="#3f4a56"/>
   </g>
 
-  ${ruler(300, 866, 230, "1 公尺", "#3a3630")}
+  ${ruler(1250, 866, 230, "1 公尺", "#3a3630")}
 </svg>`;
 
 /* ── 場景 4：家裡　upm 228（牆高 2.6 m，地面 y=680）／前景沙發 250（地面 y=900）── */
@@ -783,14 +826,18 @@ const ART_HOME = `
   <g id="g-tap">
     <rect x="80" y="424" width="14" height="46" rx="6" fill="#8f979c"/>
     <path d="M87 424 q0 -30 36 -30 h40" stroke="#8f979c" stroke-width="10" fill="none"/>
+    <rect x="68" y="410" width="34" height="8" rx="4" fill="#6b7178"/>
   </g>
 
   <g id="g-cooker">
-    <rect x="250" y="418" width="64" height="48" rx="9" fill="#fbfaf7"/>
-    <rect x="244" y="405" width="76" height="16" rx="7" fill="#d9554f"/>
-    <rect x="272" y="399" width="20" height="8" rx="4" fill="#b3ada2"/>
-    <rect x="258" y="432" width="32" height="14" rx="3" fill="#2f3640"/>
-    <circle cx="304" cy="440" r="4" fill="#6fbf8f"/>
+    <path d="M282 394 q-7 -9 0 -18 M296 394 q7 -9 0 -18" stroke="#c9cfd4" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <path d="M256 406 q32 -12 64 0" stroke="#8f979c" stroke-width="4" fill="none"/>
+    <ellipse cx="288" cy="412" rx="36" ry="12" fill="#d9554f"/>
+    <rect x="252" y="410" width="72" height="12" rx="5" fill="#c0443f"/>
+    <path d="M254 422 h68 v34 q0 10 -10 10 h-48 q-10 0 -10 -10 z" fill="#fbfaf7"/>
+    <rect x="266" y="432" width="44" height="22" rx="4" fill="#2f3640"/>
+    <rect x="271" y="437" width="20" height="8" rx="1" fill="#6fe3a8"/>
+    <circle cx="301" cy="448" r="3" fill="#ffb35c"/><circle cx="301" cy="439" r="3" fill="#9aa1a6"/>
   </g>
 
   <g id="g-hwin">
@@ -830,7 +877,10 @@ const ART_HOME = `
   </g>
   <g id="g-tv">
     <rect x="1022" y="413" width="280" height="164" rx="8" fill="#20262f"/>
-    <rect x="1032" y="423" width="260" height="134" rx="4" fill="url(#h-tv)"/>
+    <rect x="1032" y="423" width="260" height="134" rx="4" fill="#7fc4ec"/>
+    <circle cx="1250" cy="456" r="17" fill="#ffd166"/>
+    <path d="M1032 520 q60 -42 120 0 q70 -48 140 0 v37 h-260 z" fill="#5fb37a"/>
+    <path d="M1096 504 l22 -20 22 20 v22 h-44 z" fill="#e2725b"/>
     <rect x="1150" y="577" width="24" height="14" fill="#20262f"/>
   </g>
 
@@ -838,21 +888,29 @@ const ART_HOME = `
   <path d="M1345 210 h255 M1345 270 h255 M1345 330 h255 M1345 390 h255 M1345 450 h255 M1345 510 h255 M1345 570 h255 M1345 630 h255 M1405 150 v530 M1465 150 v530 M1525 150 v530 M1585 150 v530" stroke="#93aabb" stroke-width="3"/>
   <rect x="1338" y="144" width="14" height="536" fill="#6b7178"/>
   <g id="g-washer">
-    <path d="M1376 470 L1384 444 H1494 L1501 470 Z" fill="#cfd4d7"/>
-    <rect x="1402" y="451" width="44" height="13" rx="3" fill="#1d3b33"/>
-    <text x="1424" y="462" fill="#6fe3a8" font-size="11" text-anchor="middle" font-family="'Noto Sans TC',sans-serif">38</text>
-    <circle cx="1466" cy="457" r="5" fill="#9aa2a8"/><circle cx="1482" cy="457" r="5" fill="#9aa2a8"/>
-    <rect x="1370" y="470" width="137" height="210" rx="10" fill="#f4f6f7"/>
-    <rect x="1378" y="474" width="121" height="12" rx="4" fill="#c4cacd"/>
+    <path d="M1376 452 L1382 436 H1495 L1501 452 Z" fill="#cfd4d7"/>
+    <rect x="1398" y="440" width="42" height="10" rx="2" fill="#1d3b33"/>
+    <text x="1419" y="449" fill="#6fe3a8" font-size="9" text-anchor="middle" font-family="'Noto Sans TC',sans-serif">38</text>
+    <circle cx="1470" cy="444" r="4" fill="#5f9fd6"/><circle cx="1484" cy="444" r="4" fill="#9aa2a8"/>
+    <path d="M1370 490 L1382 452 H1495 L1507 490 Z" fill="#e3e7ea"/>
+    <path d="M1384 484 L1392 458 H1485 L1493 484 Z" fill="#7d93a3"/>
+    <ellipse cx="1438" cy="471" rx="36" ry="10" fill="#4f6577"/>
+    <ellipse cx="1438" cy="471" rx="15" ry="4.5" fill="#a9c0cf"/>
+    <path d="M1394 461 L1404 461 L1397 480 Z" fill="#ffffff" opacity=".35"/>
+    <rect x="1370" y="490" width="137" height="190" rx="8" fill="#f4f6f7"/>
+    <rect x="1412" y="512" width="52" height="8" rx="4" fill="#d7dcdf"/>
     <rect x="1388" y="644" width="101" height="10" rx="3" fill="#cbd0d3"/>
   </g>
 
   <g id="g-robot">
-    <ellipse cx="1180" cy="790" rx="40" ry="14" fill="#1b1428" opacity=".5"/>
-    <ellipse cx="1180" cy="772" rx="40" ry="16" fill="#3c4450"/>
-    <ellipse cx="1180" cy="766" rx="40" ry="16" fill="#59636f"/>
-    <circle cx="1180" cy="762" r="9" fill="#2b323b"/>
-    <circle cx="1204" cy="760" r="4" fill="#6fe3a8"/>
+    <ellipse cx="1180" cy="794" rx="48" ry="12" fill="#1b1428" opacity=".3"/>
+    <path d="M1136 770 v12 a44 18 0 0 0 88 0 v-12 z" fill="#2b323b"/>
+    <ellipse cx="1180" cy="770" rx="44" ry="19" fill="#5f6a77"/>
+    <path d="M1139 773 a43 18 0 0 0 82 0" stroke="#a3acb4" stroke-width="4" fill="none"/>
+    <ellipse cx="1180" cy="765" rx="14" ry="7" fill="#2b323b"/>
+    <ellipse cx="1180" cy="762" rx="14" ry="6" fill="#3d4651"/>
+    <circle cx="1206" cy="768" r="3.5" fill="#6fe3a8"/>
+    <path d="M1144 789 l-16 3 M1144 789 l-11 -7 M1144 789 l-3 11" stroke="#8d969e" stroke-width="2.5" stroke-linecap="round"/>
   </g>
 
   <g id="g-sofa">
@@ -879,8 +937,8 @@ const SCENES = [
     items:[
       {e:"⏰", n:"電子鬧鐘", chip:1, at:[928,488],  m:.12, say:"沒有了晶片，電子鬧鐘沒辦法計算時間，也不知道什麼時候該響，你就一路睡到早上九點半。"},
       {e:"📱", n:"手機",     chip:1, at:[700,508],  m:.15, say:"沒有了晶片，手機沒辦法開機，螢幕一片黑，不能看時間，也沒辦法打電話跟媽媽說你要遲到了。"},
-      {e:"🔊", n:"藍牙喇叭", chip:1, at:[1060,436], m:.12, say:"沒有了晶片，藍牙喇叭收不到手機傳過來的音樂，音樂也就播不出來，房間安靜得像半夜。"},
-      {e:"❄️", n:"冷氣",     chip:1, zone:[400,26,234,78],   gid:"g-ac",  say:"沒有了晶片，冷氣沒辦法判斷房間有多熱、該吹多冷，整台停下來，房間悶得像蒸籠。"},
+      {e:"🔊", n:"藍牙喇叭", chip:1, zone:[1108,378,92,82], gid:"g-btspk", say:"沒有了晶片，藍牙喇叭收不到手機傳過來的音樂，音樂也就播不出來，房間安靜得像半夜。"},
+      {e:"❄️", n:"冷氣",     chip:1, zone:[400,26,234,140],  gid:"g-ac",  say:"沒有了晶片，冷氣沒辦法判斷房間有多熱、該吹多冷，整台停下來，房間悶得像蒸籠。"},
       {e:"🌀", n:"電風扇",   chip:1, zone:[1362,338,116,312], gid:"g-fan", say:"沒有了晶片，遙控電風扇聽不懂遙控器送來的指令，你怎麼按它都不會轉。"},
       {e:"🛏️", n:"床",       chip:0, zone:[360,416,494,234], gid:"g-bed",    say:"床不用判斷任何事，你躺上去它就撐住你。"},
       {e:"☁️", n:"枕頭",     chip:0, zone:[396,474,120,52],  gid:"g-pillow", say:"枕頭裡面是棉花，沒有電，也沒有開關。"},
@@ -889,7 +947,7 @@ const SCENES = [
       {e:"🖼️", n:"海報",     chip:0, zone:[700,150,130,169], gid:"g-poster", say:"海報上的圖是印上去的，永遠不會換。"},
       {e:"🗄️", n:"床頭櫃",   chip:0, zone:[870,507,117,143], gid:"g-nstand", say:"櫃子只負責站在那裡，什麼都不用想。"},
       {e:"🪵", n:"書桌",     chip:0, zone:[1020,455,312,195],gid:"g-desk",   say:"桌子只要夠穩，就能把東西放上去。"},
-      {e:"🪑", n:"椅子",     chip:0, zone:[1100,429,150,221],gid:"g-chair",  say:"椅子不用知道你有多重，四隻腳撐住就好。"},
+      {e:"🪑", n:"椅子",     chip:0, zone:[1052,420,140,232],gid:"g-chair",  say:"椅子不用知道你有多重，四隻腳撐住就好。"},
       {e:"🟪", n:"地毯",     chip:0, zone:[492,718,416,108], gid:"g-rug",    say:"地毯只是一塊布，你踩上去它也不會知道。"},
       {e:"📕", n:"課本",     chip:0, at:[1290,420], m:.22, say:"課本上的字是印上去的，它不會自己改變。"},
       {e:"👕", n:"衣服",     chip:0, at:[620,772],  m:.5,  say:"衣服不需要開關，也不需要電。"},
@@ -917,18 +975,18 @@ const SCENES = [
     name:"白天 10:20", place:"教室裡", art:ART_CLASS, upm:230,
     hint:"黑板 4 公尺寬、課桌 70 公分高，都照實際尺寸畫",
     items:[
-      {e:"💻", n:"電腦",     chip:1, zone:[1266,474,108,88], gid:"g-pc",      say:"沒有了晶片，電腦沒辦法開機，老師準備好的簡報和學習單全都打不開。"},
-      {e:"📽️", n:"投影機",   chip:1, zone:[773,154,80,34],   gid:"g-proj",    say:"沒有了晶片，投影機沒辦法處理電腦送過來的畫面，投影布幕上一片黑，簡報放不出來。"},
+      {e:"💻", n:"電腦",     chip:1, zone:[1262,454,116,84], gid:"g-pc",      say:"沒有了晶片，電腦沒辦法開機，老師準備好的簡報和學習單全都打不開。"},
+      {e:"📽️", n:"投影機",   chip:1, zone:[764,146,96,46],   gid:"g-proj",    say:"沒有了晶片，投影機沒辦法處理電腦送過來的畫面，投影布幕上一片黑，簡報放不出來。"},
       {e:"🕒", n:"時鐘",     chip:1, zone:[460,172,80,80],   gid:"g-clock",   say:"沒有了晶片，時鐘沒辦法算出一秒有多長，指針停在原地，大家都不知道現在幾點、還有多久下課。"},
-      {e:"🖨️", n:"印表機",   chip:1, zone:[176,452,98,90],   gid:"g-printer", say:"沒有了晶片，印表機看不懂電腦傳過來的檔案，也控制不了噴墨，學習單印不出來。"},
-      {e:"❄️", n:"教室冷氣", chip:1, zone:[160,160,180,60],  gid:"g-cac",     say:"沒有了晶片，教室冷氣沒辦法判斷教室有多熱、該怎麼吹，整台停下來，全班熱到趴在桌上。"},
-      {e:"📢", n:"廣播喇叭", chip:0, zone:[1280,104,88,80],  gid:"g-speaker", say:"喇叭本身沒有晶片，它只是把送過來的聲音放出來，自己不會決定要不要響。"},
-      {e:"💨", n:"吊扇",     chip:0, zone:[1012,92,296,124], gid:"g-cfan",    say:"教室的吊扇是用牆上的旋鈕開關調快慢，裡面沒有晶片，所以它還在轉。"},
+      {e:"🖨️", n:"印表機",   chip:1, zone:[168,440,116,100], gid:"g-printer", say:"沒有了晶片，印表機看不懂電腦傳過來的檔案，也控制不了噴墨，學習單印不出來。"},
+      {e:"❄️", n:"教室冷氣", chip:1, zone:[160,160,180,96],  gid:"g-cac",     say:"沒有了晶片，教室冷氣沒辦法判斷教室有多熱、該怎麼吹，整台停下來，全班熱到趴在桌上。"},
+      {e:"📢", n:"廣播喇叭", chip:0, zone:[1276,104,124,84], gid:"g-speaker", say:"喇叭本身沒有晶片，它只是把送過來的聲音放出來，自己不會決定要不要響。"},
+      {e:"💨", n:"吊扇",     chip:0, zone:[1002,92,316,152], gid:"g-cfan",    say:"教室的吊扇是用牆上的旋鈕開關調快慢，裡面沒有晶片，所以它還在轉。"},
       {e:"🟩", n:"黑板",     chip:0, zone:[390,262,820,276], gid:"g-board",   say:"黑板只是一塊塗了漆的板子，字是老師自己寫上去的。"},
-      {e:"⬜", n:"投影布幕", chip:0, zone:[620,150,400,324], gid:"g-screen",  say:"布幕就是一塊白布。畫面是投影機送過來的，布本身不會想。"},
-      {e:"📋", n:"布告欄",   chip:0, zone:[60,280,280,180],  gid:"g-notice",  say:"布告欄上的紙不會自己換，要人去貼。"},
+      {e:"⬜", n:"投影布幕", chip:0, zone:[620,150,400,346], gid:"g-screen",  say:"布幕就是一塊白布。畫面是投影機送過來的，布本身不會想。"},
+      {e:"📋", n:"布告欄",   chip:0, zone:[60,262,280,180],  gid:"g-notice",  say:"布告欄上的紙不會自己換，要人去貼。"},
       {e:"🗄️", n:"矮櫃",     chip:0, zone:[100,540,280,160], gid:"g-cabinet", say:"櫃子只要能放東西就好，不用判斷放的是什麼。"},
-      {e:"🏫", n:"講桌",     chip:0, zone:[1210,540,240,160],gid:"g-podium",  say:"講桌是一塊木頭，老師走了它也不會做事。"},
+      {e:"🏫", n:"講桌",     chip:0, zone:[1202,520,256,180],gid:"g-podium",  say:"講桌是一塊木頭，老師走了它也不會做事。"},
       {e:"🪟", n:"教室窗戶", chip:0, zone:[1420,180,150,340],gid:"g-cwin",    say:"窗戶開不開，要有人去推它。"},
       {e:"🪵", n:"課桌",     chip:0, zone:[114,730,152,170], gid:"g-desks",   say:"課桌只負責站好，它不知道你在寫什麼。"},
       {e:"🪵", n:"課桌",     chip:0, zone:[574,730,152,170], gid:"g-desks",   say:"課桌只負責站好，它不知道你在寫什麼。"},
@@ -945,16 +1003,16 @@ const SCENES = [
     items:[
       {e:"🧊", n:"冰箱",       chip:1, zone:[530,270,160,410], gid:"g-fridge", say:"沒有了晶片，冰箱沒辦法判斷裡面夠不夠冷，也就不會啟動降溫，今天的晚餐在裡面慢慢壞掉。"},
       {e:"📺", n:"電視",       chip:1, zone:[1022,413,280,164],gid:"g-tv",     say:"沒有了晶片，電視沒辦法把收到的訊號變成畫面和聲音，打開也是一片黑。"},
-      {e:"🧺", n:"洗衣機",     chip:1, zone:[1370,440,137,240],gid:"g-washer", say:"沒有了晶片，洗衣機沒辦法決定什麼時候進水、轉多久、什麼時候脫水，制服洗到一半就停住，明天你只能穿睡衣上學。"},
-      {e:"🤖", n:"掃地機器人", chip:1, zone:[1136,748,88,46],  gid:"g-robot",  say:"沒有了晶片，掃地機器人沒辦法判斷哪裡有牆、哪裡掃過了，停在客廳正中間，連充電座都找不到。"},
-      {e:"🍚", n:"電子鍋",     chip:1, zone:[240,395,84,76],   gid:"g-cooker", say:"沒有了晶片，電子鍋沒辦法控制加熱多久、多熱，飯煮到一半就停了，中間還是生的。（會跳起來的傳統電鍋沒有晶片，它還能煮。）"},
+      {e:"🧺", n:"洗衣機",     chip:1, zone:[1366,432,145,248],gid:"g-washer", say:"沒有了晶片，洗衣機沒辦法決定什麼時候進水、轉多久、什麼時候脫水，制服洗到一半就停住，明天你只能穿睡衣上學。"},
+      {e:"🤖", n:"掃地機器人", chip:1, zone:[1120,740,120,62],  gid:"g-robot",  say:"沒有了晶片，掃地機器人沒辦法判斷哪裡有牆、哪裡掃過了，停在客廳正中間，連充電座都找不到。"},
+      {e:"🍚", n:"電子鍋",     chip:1, zone:[244,368,90,102],  gid:"g-cooker", say:"沒有了晶片，電子鍋沒辦法控制加熱多久、多熱，飯煮到一半就停了，中間還是生的。（會跳起來的傳統電鍋沒有晶片，它還能煮。）"},
       {e:"🎮", n:"遊戲機",     chip:1, at:[1240,535], m:.3, say:"沒有了晶片，遊戲機沒辦法算出遊戲畫面，也讀不到你按了哪個按鈕，今天沒得玩。"},
       {e:"🚪", n:"房間門",     chip:0, zone:[730,224,205,456], gid:"g-hdoor",   say:"門靠的是門把和鉸鏈，推了就開。"},
       {e:"🛋️", n:"沙發",       chip:0, zone:[400,688,500,212], gid:"g-sofa",    say:"沙發只負責軟，它不用知道誰坐上來。"},
       {e:"🗄️", n:"電視櫃",     chip:0, zone:[980,577,365,103], gid:"g-tvstand", say:"櫃子撐住電視就好，電視壞了它也不知道。"},
       {e:"🚰", n:"流理台",     chip:0, zone:[0,466,470,214],   gid:"g-counter", say:"檯面只是一塊板子，洗不洗碗它都一樣。"},
       {e:"🪟", n:"夜晚的窗",   chip:0, zone:[1000,150,320,190],gid:"g-hwin",    say:"窗戶外面天黑了，但窗戶自己不知道。"},
-      {e:"💧", n:"水龍頭",     chip:0, zone:[74,388,106,84],   gid:"g-tap",     say:"水龍頭靠你轉開它，它不會自己決定要不要出水。"},
+      {e:"💧", n:"水龍頭",     chip:0, zone:[64,386,110,86],   gid:"g-tap",     say:"水龍頭靠你轉開它，它不會自己決定要不要出水。"},
       {e:"🗃️", n:"廚房上櫃",   chip:0, zone:[0,180,430,150],   gid:"g-upper",   say:"櫃子只是幾塊木板，門要你自己開。"},
       {e:"🧦", n:"襪子",       chip:0, at:[1010,800], m:.25, say:"襪子不需要判斷任何事，穿上就暖。"},
       {e:"🥢", n:"筷子",       chip:0, at:[400,440], m:.17, say:"筷子靠的是你的手指，不是電。"}
