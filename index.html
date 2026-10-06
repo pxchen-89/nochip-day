@@ -72,7 +72,8 @@
   }
   .stage svg.art{position:absolute;inset:0;width:100%;height:100%;display:block}
   .art .broken{opacity:.22;filter:grayscale(1);transition:opacity .55s,filter .55s}
-  .art .ruler{opacity:.4}
+  .art .ruler{opacity:.45}
+  .art [id^="g-"]{filter:url(#ol)}
 
   .hot{
     position:absolute;background:transparent;border:0;padding:0;font:inherit;color:inherit;cursor:pointer;
@@ -303,10 +304,18 @@
    畫面右下角附 1 公尺比例尺。畫面上每一樣看得到的東西都可以點。
    ──────────────────────────────────────────────── */
 
-const ruler = (x, y, upm, label) => `
-  <g class="ruler" transform="translate(${x},${y})" stroke="#fff" stroke-width="3" fill="none">
+/* 物品輪廓：讓每樣東西跟背景分開，學生比較認得出是什麼 */
+const OUTLINE = `<filter id="ol" x="-.15" y="-.15" width="1.3" height="1.3">
+  <feMorphology in="SourceAlpha" operator="dilate" radius="3" result="d"/>
+  <feFlood flood-color="#1e1729" flood-opacity=".85"/>
+  <feComposite in2="d" operator="in" result="o"/>
+  <feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge>
+</filter>`;
+
+const ruler = (x, y, upm, label, color = "#fff") => `
+  <g class="ruler" transform="translate(${x},${y})" stroke="${color}" stroke-width="3" fill="none">
     <line x1="0" y1="0" x2="${upm}" y2="0"/><line x1="0" y1="-9" x2="0" y2="9"/><line x1="${upm}" y1="-9" x2="${upm}" y2="9"/>
-    <text x="${upm / 2}" y="-16" fill="#fff" stroke="none" font-size="24" font-weight="700"
+    <text x="${upm / 2}" y="-16" fill="${color}" stroke="none" font-size="24" font-weight="700"
       text-anchor="middle" font-family="'Noto Sans TC',sans-serif">${label}</text>
   </g>`;
 
@@ -314,17 +323,18 @@ const ruler = (x, y, upm, label) => `
 const ART_ROOM = `
 <svg class="art" viewBox="0 0 1600 900" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
   <defs>
-    <linearGradient id="r-wall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#513b63"/><stop offset="1" stop-color="#3b2948"/></linearGradient>
-    <linearGradient id="r-floor" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6f4c3a"/><stop offset="1" stop-color="#4e3224"/></linearGradient>
+    ${OUTLINE}
+    <linearGradient id="r-wall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e3e9f0"/><stop offset="1" stop-color="#cbd5e0"/></linearGradient>
+    <linearGradient id="r-floor" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bb8c5f"/><stop offset="1" stop-color="#9a6c45"/></linearGradient>
     <linearGradient id="r-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd9a0"/><stop offset=".55" stop-color="#ffab74"/><stop offset="1" stop-color="#ef8a6c"/></linearGradient>
     <linearGradient id="r-beam" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffd9a0" stop-opacity=".38"/><stop offset="1" stop-color="#ffd9a0" stop-opacity="0"/></linearGradient>
   </defs>
 
-  <rect width="1600" height="900" fill="#3b2948"/>
+  <rect width="1600" height="900" fill="#cbd5e0"/>
   <rect width="1600" height="650" fill="url(#r-wall)"/>
   <rect y="650" width="1600" height="250" fill="url(#r-floor)"/>
-  <rect y="637" width="1600" height="13" fill="#2c1f38"/>
-  <g stroke="#43291c" stroke-width="3" opacity=".45">
+  <rect y="637" width="1600" height="13" fill="#8c7d6c"/>
+  <g stroke="#7a5233" stroke-width="3" opacity=".5">
     <line x1="0" y1="700" x2="1600" y2="700"/><line x1="0" y1="765" x2="1600" y2="765"/><line x1="0" y1="838" x2="1600" y2="838"/>
   </g>
   <path d="M1010 91 L1400 91 L1520 650 L1180 650 Z" fill="url(#r-beam)"/>
@@ -341,8 +351,8 @@ const ART_ROOM = `
     <rect x="1210" y="226" width="7" height="44" rx="3" fill="#8f979c"/>
     <rect x="990" y="399" width="430" height="18" rx="4" fill="#dccdb5"/>
   </g>
-  <path d="M986 70 q42 168 0 340 l-64 0 0-340 z" fill="#6b4a74"/>
-  <path d="M1424 70 q-42 168 0 340 l64 0 0-340 z" fill="#6b4a74"/>
+  <path d="M986 70 q42 168 0 340 l-64 0 0-340 z" fill="#8a63a8"/>
+  <path d="M1424 70 q-42 168 0 340 l64 0 0-340 z" fill="#8a63a8"/>
 
   <g id="g-door">
     <rect x="70" y="130" width="234" height="520" rx="6" fill="#6e4f3c"/>
@@ -360,16 +370,16 @@ const ART_ROOM = `
   </g>
 
   <g id="g-poster">
-    <rect x="700" y="150" width="130" height="169" rx="5" fill="#5d4370"/>
+    <rect x="700" y="150" width="130" height="169" rx="5" fill="#2f6f9f"/>
     <circle cx="765" cy="212" r="30" fill="#ffb35c" opacity=".85"/>
-    <path d="M714 296 l38 -48 32 34 26 -28 26 42 z" fill="#8f6ba6"/>
+    <path d="M714 296 l38 -48 32 34 26 -28 26 42 z" fill="#7cc79a"/>
   </g>
 
   <g id="g-bed">
     <rect x="360" y="416" width="30" height="234" rx="8" fill="#8a5c48"/>
     <rect x="390" y="520" width="464" height="86" rx="12" fill="#f3e9db"/>
-    <path d="M530 512 h310 a14 14 0 0 1 14 14 v66 a14 14 0 0 1 -14 14 h-310 z" fill="#7ea9c9"/>
-    <path d="M530 512 v94" stroke="#6d97b6" stroke-width="5"/>
+    <path d="M530 512 h310 a14 14 0 0 1 14 14 v66 a14 14 0 0 1 -14 14 h-310 z" fill="#4f86c6"/>
+    <path d="M530 512 v94" stroke="#3f73ad" stroke-width="5"/>
     <rect x="394" y="606" width="20" height="44" fill="#6f4736"/>
     <rect x="830" y="606" width="20" height="44" fill="#6f4736"/>
   </g>
@@ -392,31 +402,31 @@ const ART_ROOM = `
   </g>
 
   <g id="g-chair">
-    <rect x="1230" y="429" width="14" height="104" rx="6" fill="#8b6247"/>
-    <rect x="1120" y="429" width="124" height="34" rx="8" fill="#9c7050"/>
-    <rect x="1100" y="533" width="150" height="16" rx="7" fill="#a5774f"/>
-    <rect x="1112" y="549" width="14" height="101" rx="5" fill="#8b6247"/>
-    <rect x="1224" y="549" width="14" height="101" rx="5" fill="#8b6247"/>
+    <rect x="1230" y="429" width="14" height="104" rx="6" fill="#2f3a47"/>
+    <rect x="1120" y="429" width="124" height="34" rx="8" fill="#46586e"/>
+    <rect x="1100" y="533" width="150" height="16" rx="7" fill="#46586e"/>
+    <rect x="1112" y="549" width="14" height="101" rx="5" fill="#2f3a47"/>
+    <rect x="1224" y="549" width="14" height="101" rx="5" fill="#2f3a47"/>
   </g>
 
   <g id="g-fan">
-    <ellipse cx="1420" cy="644" rx="58" ry="12" fill="#cfc7b8"/>
-    <rect x="1414" y="470" width="12" height="176" fill="#ded7c9"/>
-    <circle cx="1420" cy="390" r="52" fill="#e8e2d6"/>
-    <circle cx="1420" cy="390" r="44" fill="#b9b2a4"/>
-    <g fill="#e8e2d6">
+    <ellipse cx="1420" cy="644" rx="58" ry="12" fill="#6f7780"/>
+    <rect x="1414" y="470" width="12" height="176" fill="#8d949b"/>
+    <circle cx="1420" cy="390" r="52" fill="#8d949b"/>
+    <circle cx="1420" cy="390" r="44" fill="#d6dce1"/>
+    <g fill="#5f9fd6">
       <path d="M1420 390 l30 -26 a40 40 0 0 1 4 34 z"/>
       <path d="M1420 390 l-6 40 a40 40 0 0 1 -30 -18 z"/>
       <path d="M1420 390 l-24 -30 a40 40 0 0 1 34 -10 z"/>
     </g>
     <circle cx="1420" cy="390" r="9" fill="#8f887a"/>
-    <g stroke="#d8d1c3" stroke-width="2" fill="none" opacity=".8"><circle cx="1420" cy="390" r="20"/><circle cx="1420" cy="390" r="32"/></g>
-    <rect x="1400" y="442" width="40" height="22" rx="8" fill="#ded7c9"/>
+    <g stroke="#8d949b" stroke-width="2" fill="none" opacity=".7"><circle cx="1420" cy="390" r="20"/><circle cx="1420" cy="390" r="32"/></g>
+    <rect x="1400" y="442" width="40" height="22" rx="8" fill="#8d949b"/>
   </g>
 
   <g id="g-rug">
-    <ellipse cx="700" cy="772" rx="208" ry="54" fill="#7a5875" opacity=".9"/>
-    <ellipse cx="700" cy="772" rx="160" ry="38" fill="none" stroke="#8e6a88" stroke-width="6" opacity=".8"/>
+    <ellipse cx="700" cy="772" rx="208" ry="54" fill="#c4574a"/>
+    <ellipse cx="700" cy="772" rx="160" ry="38" fill="none" stroke="#e8977c" stroke-width="6"/>
   </g>
 
   ${ruler(1160, 866, 260, "1 公尺")}
@@ -436,10 +446,11 @@ const acUnit = (x, y) => `<rect x="${x}" y="${y}" width="46" height="34" rx="3" 
 const ART_STREET = `
 <svg class="art" viewBox="0 0 1600 900" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
   <defs>
+    ${OUTLINE}
     <linearGradient id="s-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3b78a8"/><stop offset="1" stop-color="#a9cfe0"/></linearGradient>
     <linearGradient id="s-road" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2f3640"/><stop offset="1" stop-color="#1f242c"/></linearGradient>
     <linearGradient id="s-walk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7a7673"/><stop offset="1" stop-color="#5c5957"/></linearGradient>
-    <linearGradient id="s-glass" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d8eef5" stop-opacity=".55"/><stop offset="1" stop-color="#9fc9d8" stop-opacity=".35"/></linearGradient>
+    <linearGradient id="s-glass" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#bfe2ef" stop-opacity=".75"/><stop offset="1" stop-color="#86b9cf" stop-opacity=".6"/></linearGradient>
   </defs>
   <rect width="1600" height="900" fill="url(#s-sky)"/>
 
@@ -471,7 +482,7 @@ const ART_STREET = `
   <g fill="#f2c14e"><rect x="210" y="454" width="14" height="24"/><rect x="232" y="454" width="14" height="24"/></g>
   <g id="g-storewin">
     <rect x="20" y="130" width="242" height="390" fill="url(#s-glass)"/>
-    <rect x="20" y="130" width="242" height="390" fill="none" stroke="#c9c3b2" stroke-width="8"/>
+    <rect x="20" y="130" width="242" height="390" fill="none" stroke="#6b7178" stroke-width="8"/>
     <path d="M34 146 h70 l-52 96 z" fill="#ffffff" opacity=".22"/>
   </g>
   <g id="g-atm">
@@ -491,12 +502,12 @@ const ART_STREET = `
   </g>
   <g id="g-door">
     <rect x="286" y="130" width="248" height="390" fill="#f6efe0"/>
-    <rect x="290" y="205" width="120" height="315" fill="url(#s-glass)" stroke="#c9c3b2" stroke-width="6"/>
-    <rect x="410" y="205" width="120" height="315" fill="url(#s-glass)" stroke="#c9c3b2" stroke-width="6"/>
-    <rect x="286" y="130" width="248" height="75" fill="url(#s-glass)" stroke="#c9c3b2" stroke-width="6"/>
+    <rect x="290" y="205" width="120" height="315" fill="url(#s-glass)" stroke="#6b7178" stroke-width="6"/>
+    <rect x="410" y="205" width="120" height="315" fill="url(#s-glass)" stroke="#6b7178" stroke-width="6"/>
+    <rect x="286" y="130" width="248" height="75" fill="url(#s-glass)" stroke="#6b7178" stroke-width="6"/>
     <rect x="386" y="184" width="48" height="16" rx="4" fill="#2b2f33"/>
     <circle cx="424" cy="192" r="3" fill="#e5483f"/>
-    <text x="410" y="300" fill="#6a8f9c" font-size="20" text-anchor="middle" font-family="'Noto Sans TC',sans-serif">自動門</text>
+    <text x="410" y="300" fill="#2f5566" font-size="20" text-anchor="middle" font-family="'Noto Sans TC',sans-serif">自動門</text>
   </g>
 
   <!-- 路口號誌：懸臂上的橫式紅黃綠燈＋桿子上的行人號誌 -->
@@ -600,22 +611,25 @@ const ART_STREET = `
 const ART_CLASS = `
 <svg class="art" viewBox="0 0 1600 900" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
   <defs>
+    ${OUTLINE}
     <linearGradient id="c-wall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5c5233"/><stop offset="1" stop-color="#443c26"/></linearGradient>
-    <linearGradient id="c-floor" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6b5c3c"/><stop offset="1" stop-color="#4a3f28"/></linearGradient>
+    <linearGradient id="c-floor" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bdb9af"/><stop offset="1" stop-color="#a19d93"/></linearGradient>
     <linearGradient id="c-win" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cfe4ec"/><stop offset="1" stop-color="#9dc3d2"/></linearGradient>
   </defs>
 
-  <rect width="1600" height="900" fill="#443c26"/>
-  <rect width="1600" height="100" fill="#6a5f3d"/>
-  <rect y="100" width="1600" height="600" fill="url(#c-wall)"/>
+  <rect width="1600" height="900" fill="#a9a59c"/>
+  <rect width="1600" height="100" fill="#e6e1d3"/>
+  <rect y="100" width="1600" height="360" fill="#f3eddc"/>
+  <rect y="460" width="1600" height="240" fill="#7aa58a"/>
+  <rect y="456" width="1600" height="6" fill="#5f8a70"/>
   <rect y="700" width="1600" height="200" fill="url(#c-floor)"/>
-  <rect y="686" width="1600" height="16" fill="#332c1b"/>
-  <g stroke="#3f3521" stroke-width="3" opacity=".5"><line x1="0" y1="760" x2="1600" y2="760"/><line x1="0" y1="830" x2="1600" y2="830"/></g>
+  <rect y="686" width="1600" height="16" fill="#4f6f5c"/>
+  <g stroke="#8a867d" stroke-width="3" opacity=".6"><line x1="0" y1="760" x2="1600" y2="760"/><line x1="0" y1="830" x2="1600" y2="830"/></g>
 
   <g id="g-board">
     <rect x="400" y="272" width="800" height="248" rx="6" fill="#2e4a3c"/>
-    <rect x="390" y="262" width="820" height="268" rx="8" fill="none" stroke="#b3986a" stroke-width="12"/>
-    <rect x="400" y="520" width="800" height="18" fill="#b3986a"/>
+    <rect x="390" y="262" width="820" height="268" rx="8" fill="none" stroke="#9aa1a6" stroke-width="12"/>
+    <rect x="400" y="520" width="800" height="18" fill="#9aa1a6"/>
     <g stroke="#c9d8cd" stroke-width="4" opacity=".55" stroke-linecap="round">
       <path d="M440 330 h170"/><path d="M440 372 h240"/><path d="M440 414 h120"/>
     </g>
@@ -629,7 +643,7 @@ const ART_CLASS = `
 
   <g id="g-proj">
     <rect x="806" y="100" width="12" height="58" fill="#8a8579"/>
-    <rect x="777" y="158" width="70" height="26" rx="6" fill="#dcd7c9"/>
+    <rect x="777" y="158" width="70" height="26" rx="6" fill="#c3beb2"/>
     <circle cx="847" cy="171" r="9" fill="#8fb6c4"/>
     <circle cx="789" cy="166" r="4" fill="#7ad1a0"/>
   </g>
@@ -655,24 +669,24 @@ const ART_CLASS = `
   <!-- 廣播喇叭（木箱）：0.38 x 0.27 m，掛在牆角高處 -->
   <g id="g-speaker">
     <path d="M1324 124 v-14" stroke="#8a8579" stroke-width="4"/>
-    <rect x="1286" y="124" width="76" height="54" rx="4" fill="#d8c8a6"/>
-    <rect x="1294" y="132" width="60" height="38" rx="3" fill="#8f7f62"/>
-    <path d="M1294 140 h60 M1294 148 h60 M1294 156 h60 M1294 164 h60" stroke="#b3a383" stroke-width="2"/>
+    <rect x="1286" y="124" width="76" height="54" rx="4" fill="#9b7652"/>
+    <rect x="1294" y="132" width="60" height="38" rx="3" fill="#4f3d2b"/>
+    <path d="M1294 140 h60 M1294 148 h60 M1294 156 h60 M1294 164 h60" stroke="#7d6248" stroke-width="2"/>
   </g>
 
   <!-- 吊扇：葉片展開 1.4 m，從天花板垂下 -->
   <g id="g-cfan">
     <rect x="1148" y="96" width="24" height="10" rx="3" fill="#a39d90"/>
     <rect x="1156" y="100" width="8" height="80" fill="#8a8579"/>
-    <path d="M1126 196 L1022 204 Q1018 208 1024 210 L1128 204 Z" fill="#cfc8b8"/>
-    <path d="M1194 196 L1298 204 Q1302 208 1296 210 L1192 204 Z" fill="#cfc8b8"/>
-    <ellipse cx="1160" cy="190" rx="34" ry="14" fill="#d9d3c4"/>
+    <path d="M1126 196 L1022 204 Q1018 208 1024 210 L1128 204 Z" fill="#a8a296"/>
+    <path d="M1194 196 L1298 204 Q1302 208 1296 210 L1192 204 Z" fill="#a8a296"/>
+    <ellipse cx="1160" cy="190" rx="34" ry="14" fill="#b9b3a6"/>
     <ellipse cx="1160" cy="203" rx="14" ry="5" fill="#bdb6a6"/>
   </g>
 
   <g id="g-notice">
-    <rect x="60" y="280" width="280" height="180" rx="6" fill="#6f6444"/>
-    <rect x="72" y="292" width="256" height="156" fill="#8a7d55"/>
+    <rect x="60" y="280" width="280" height="180" rx="6" fill="#8a6440"/>
+    <rect x="72" y="292" width="256" height="156" fill="#c49a6c"/>
     <g fill="#efe9d6">
       <rect x="92" y="312" width="64" height="46" rx="2" transform="rotate(-3 124 335)"/>
       <rect x="176" y="318" width="58" height="42" rx="2" transform="rotate(2 205 339)"/>
@@ -713,66 +727,67 @@ const ART_CLASS = `
 
   <g id="g-desks">
     <g>
-      <rect x="120" y="739" width="138" height="14" rx="5" fill="#d9b981"/>
-      <rect x="128" y="753" width="122" height="42" rx="4" fill="#8a96a2"/>
-      <rect x="132" y="795" width="12" height="105" fill="#6f7b87"/><rect x="234" y="795" width="12" height="105" fill="#6f7b87"/>
+      <rect x="120" y="739" width="138" height="14" rx="5" fill="#c08a4e"/>
+      <rect x="128" y="753" width="122" height="42" rx="4" fill="#5d6b78"/>
+      <rect x="132" y="795" width="12" height="105" fill="#3f4a56"/><rect x="234" y="795" width="12" height="105" fill="#3f4a56"/>
     </g>
     <g>
-      <rect x="580" y="739" width="138" height="14" rx="5" fill="#d9b981"/>
-      <rect x="588" y="753" width="122" height="42" rx="4" fill="#8a96a2"/>
-      <rect x="592" y="795" width="12" height="105" fill="#6f7b87"/><rect x="694" y="795" width="12" height="105" fill="#6f7b87"/>
+      <rect x="580" y="739" width="138" height="14" rx="5" fill="#c08a4e"/>
+      <rect x="588" y="753" width="122" height="42" rx="4" fill="#5d6b78"/>
+      <rect x="592" y="795" width="12" height="105" fill="#3f4a56"/><rect x="694" y="795" width="12" height="105" fill="#3f4a56"/>
     </g>
     <g>
-      <rect x="1040" y="739" width="138" height="14" rx="5" fill="#d9b981"/>
-      <rect x="1048" y="753" width="122" height="42" rx="4" fill="#8a96a2"/>
-      <rect x="1052" y="795" width="12" height="105" fill="#6f7b87"/><rect x="1154" y="795" width="12" height="105" fill="#6f7b87"/>
+      <rect x="1040" y="739" width="138" height="14" rx="5" fill="#c08a4e"/>
+      <rect x="1048" y="753" width="122" height="42" rx="4" fill="#5d6b78"/>
+      <rect x="1052" y="795" width="12" height="105" fill="#3f4a56"/><rect x="1154" y="795" width="12" height="105" fill="#3f4a56"/>
     </g>
   </g>
 
   <g id="g-schair">
-    <rect x="806" y="704" width="14" height="104" rx="6" fill="#6f7b87"/>
-    <rect x="700" y="704" width="120" height="30" rx="8" fill="#d9b981"/>
-    <rect x="690" y="808" width="140" height="14" rx="6" fill="#d9b981"/>
-    <rect x="700" y="822" width="12" height="78" fill="#6f7b87"/><rect x="808" y="822" width="12" height="78" fill="#6f7b87"/>
+    <rect x="806" y="704" width="14" height="104" rx="6" fill="#3f4a56"/>
+    <rect x="700" y="704" width="120" height="30" rx="8" fill="#c08a4e"/>
+    <rect x="690" y="808" width="140" height="14" rx="6" fill="#c08a4e"/>
+    <rect x="700" y="822" width="12" height="78" fill="#3f4a56"/><rect x="808" y="822" width="12" height="78" fill="#3f4a56"/>
   </g>
 
-  ${ruler(300, 866, 230, "1 公尺")}
+  ${ruler(300, 866, 230, "1 公尺", "#3a3630")}
 </svg>`;
 
 /* ── 場景 4：家裡　upm 228（牆高 2.6 m，地面 y=680）／前景沙發 250（地面 y=900）── */
 const ART_HOME = `
 <svg class="art" viewBox="0 0 1600 900" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
   <defs>
-    <linearGradient id="h-wall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3c2b55"/><stop offset="1" stop-color="#2a1e3d"/></linearGradient>
-    <linearGradient id="h-floor" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5b4436"/><stop offset="1" stop-color="#3f2f25"/></linearGradient>
+    ${OUTLINE}
+    <linearGradient id="h-wall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#efe3cf"/><stop offset="1" stop-color="#e2d3ba"/></linearGradient>
+    <linearGradient id="h-floor" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a67c55"/><stop offset="1" stop-color="#8a6340"/></linearGradient>
     <linearGradient id="h-tv" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1b2230"/><stop offset="1" stop-color="#2b3648"/></linearGradient>
   </defs>
 
-  <rect width="1600" height="900" fill="#2a1e3d"/>
-  <rect width="1600" height="87" fill="#4a3868"/>
+  <rect width="1600" height="900" fill="#e2d3ba"/>
+  <rect width="1600" height="87" fill="#f2e9da"/>
   <rect y="87" width="1600" height="593" fill="url(#h-wall)"/>
   <rect y="680" width="1600" height="220" fill="url(#h-floor)"/>
-  <rect y="667" width="1600" height="14" fill="#221a31"/>
-  <g stroke="#34281f" stroke-width="3" opacity=".5"><line x1="0" y1="740" x2="1600" y2="740"/><line x1="0" y1="810" x2="1600" y2="810"/></g>
+  <rect y="667" width="1600" height="14" fill="#9c8468"/>
+  <g stroke="#6f4d30" stroke-width="3" opacity=".5"><line x1="0" y1="740" x2="1600" y2="740"/><line x1="0" y1="810" x2="1600" y2="810"/></g>
 
   <g id="g-counter">
-    <rect x="0" y="475" width="470" height="205" fill="#7a6a86"/>
-    <rect x="0" y="466" width="470" height="16" rx="5" fill="#d9d2c4"/>
-    <rect x="40" y="496" width="170" height="130" rx="5" fill="#6b5c78"/>
-    <rect x="252" y="496" width="170" height="130" rx="5" fill="#6b5c78"/>
+    <rect x="0" y="475" width="470" height="205" fill="#b98c5e"/>
+    <rect x="0" y="466" width="470" height="16" rx="5" fill="#f4f2ee"/>
+    <rect x="40" y="496" width="170" height="130" rx="5" fill="#a87a4d"/>
+    <rect x="252" y="496" width="170" height="130" rx="5" fill="#a87a4d"/>
   </g>
   <g id="g-upper">
-    <rect x="0" y="180" width="430" height="150" rx="6" fill="#6a5a78"/>
-    <line x1="215" y1="180" x2="215" y2="330" stroke="#584a66" stroke-width="5"/>
+    <rect x="0" y="180" width="430" height="150" rx="6" fill="#c79a68"/>
+    <line x1="215" y1="180" x2="215" y2="330" stroke="#9a6e44" stroke-width="5"/>
   </g>
   <g id="g-tap">
-    <rect x="80" y="424" width="14" height="46" rx="6" fill="#c9c2b4"/>
-    <path d="M87 424 q0 -30 36 -30 h40" stroke="#c9c2b4" stroke-width="10" fill="none"/>
+    <rect x="80" y="424" width="14" height="46" rx="6" fill="#8f979c"/>
+    <path d="M87 424 q0 -30 36 -30 h40" stroke="#8f979c" stroke-width="10" fill="none"/>
   </g>
 
   <g id="g-cooker">
-    <rect x="250" y="418" width="64" height="48" rx="9" fill="#e3e0d8"/>
-    <rect x="244" y="405" width="76" height="16" rx="7" fill="#cfcac0"/>
+    <rect x="250" y="418" width="64" height="48" rx="9" fill="#fbfaf7"/>
+    <rect x="244" y="405" width="76" height="16" rx="7" fill="#d9554f"/>
     <rect x="272" y="399" width="20" height="8" rx="4" fill="#b3ada2"/>
     <rect x="258" y="432" width="32" height="14" rx="3" fill="#2f3640"/>
     <circle cx="304" cy="440" r="4" fill="#6fbf8f"/>
@@ -793,11 +808,11 @@ const ART_HOME = `
   </g>
 
   <g id="g-fridge">
-    <rect x="530" y="270" width="160" height="410" rx="12" fill="#cfd4d8"/>
-    <rect x="530" y="270" width="160" height="150" rx="12" fill="#dde1e5"/>
-    <line x1="530" y1="424" x2="690" y2="424" stroke="#adb4ba" stroke-width="5"/>
-    <rect x="660" y="300" width="10" height="90" rx="5" fill="#8d949b"/>
-    <rect x="660" y="452" width="10" height="120" rx="5" fill="#8d949b"/>
+    <rect x="530" y="270" width="160" height="410" rx="12" fill="#b4bcc3"/>
+    <rect x="530" y="270" width="160" height="150" rx="12" fill="#c5ccd2"/>
+    <line x1="530" y1="424" x2="690" y2="424" stroke="#8d969e" stroke-width="5"/>
+    <rect x="660" y="300" width="10" height="90" rx="5" fill="#5f6870"/>
+    <rect x="660" y="452" width="10" height="120" rx="5" fill="#5f6870"/>
   </g>
 
   <g id="g-hdoor">
@@ -809,9 +824,9 @@ const ART_HOME = `
   </g>
 
   <g id="g-tvstand">
-    <rect x="980" y="577" width="365" height="103" rx="8" fill="#8a6a52"/>
-    <rect x="980" y="577" width="365" height="12" rx="6" fill="#a37f61"/>
-    <line x1="1162" y1="589" x2="1162" y2="680" stroke="#77583f" stroke-width="4"/>
+    <rect x="980" y="577" width="365" height="103" rx="8" fill="#5e4636"/>
+    <rect x="980" y="577" width="365" height="12" rx="6" fill="#7a5c46"/>
+    <line x1="1162" y1="589" x2="1162" y2="680" stroke="#4a3528" stroke-width="4"/>
   </g>
   <g id="g-tv">
     <rect x="1022" y="413" width="280" height="164" rx="8" fill="#20262f"/>
@@ -819,12 +834,15 @@ const ART_HOME = `
     <rect x="1150" y="577" width="24" height="14" fill="#20262f"/>
   </g>
 
+  <rect x="1345" y="150" width="255" height="530" fill="#a9bfcd"/>
+  <path d="M1345 210 h255 M1345 270 h255 M1345 330 h255 M1345 390 h255 M1345 450 h255 M1345 510 h255 M1345 570 h255 M1345 630 h255 M1405 150 v530 M1465 150 v530 M1525 150 v530 M1585 150 v530" stroke="#93aabb" stroke-width="3"/>
+  <rect x="1338" y="144" width="14" height="536" fill="#6b7178"/>
   <g id="g-washer">
     <path d="M1376 470 L1384 444 H1494 L1501 470 Z" fill="#cfd4d7"/>
     <rect x="1402" y="451" width="44" height="13" rx="3" fill="#1d3b33"/>
     <text x="1424" y="462" fill="#6fe3a8" font-size="11" text-anchor="middle" font-family="'Noto Sans TC',sans-serif">38</text>
     <circle cx="1466" cy="457" r="5" fill="#9aa2a8"/><circle cx="1482" cy="457" r="5" fill="#9aa2a8"/>
-    <rect x="1370" y="470" width="137" height="210" rx="10" fill="#e3e6e8"/>
+    <rect x="1370" y="470" width="137" height="210" rx="10" fill="#f4f6f7"/>
     <rect x="1378" y="474" width="121" height="12" rx="4" fill="#c4cacd"/>
     <rect x="1388" y="644" width="101" height="10" rx="3" fill="#cbd0d3"/>
   </g>
@@ -918,7 +936,7 @@ const SCENES = [
       {e:"💺", n:"椅子",     chip:0, zone:[686,700,148,200], gid:"g-schair",  say:"椅子只要四隻腳站得穩就能用。"},
       {e:"📏", n:"尺",       chip:0, at:[190,722], m:.21, say:"尺上的刻度是刻上去的，它不會自己量。"},
       {e:"🏀", n:"籃球",     chip:0, at:[1200,806], m:.24, say:"籃球裡面只有空氣，你拍它它就彈。"},
-      {e:"🧹", n:"掃把",     chip:0, at:[1420,736], m:.85, say:"掃把不需要電，也不需要開機。"}
+      {e:"🧹", n:"掃把",     chip:0, at:[420,782], m:.85, say:"掃把不需要電，也不需要開機。"}
     ]
   },
   {
