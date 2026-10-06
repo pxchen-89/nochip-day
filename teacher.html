@@ -52,23 +52,27 @@
   .notice p{color:var(--muted);line-height:1.7}
 
   /* ── 等待區 ── */
-  #vLobby{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:clamp(16px,2.4vw,36px);align-items:stretch}
-  .joincard{background:#fff;color:#1c1526;border-radius:28px;padding:clamp(16px,2vw,28px);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:0}
-  .joincard .qr{width:min(100%,46vh);aspect-ratio:1}
+  /* QR code 盡量大：高度用滿（扣掉頂部列），寬度最多佔畫面一半；整組置中 */
+  #vLobby{display:flex;justify-content:center;align-items:center;gap:clamp(20px,3vw,56px);min-height:0}
+  #vLobby{--qr:min(calc(100vh - 100px), 54vw)}
+  .joincard{flex:none;width:var(--qr);height:var(--qr);background:#fff;border-radius:22px;padding:clamp(6px,.8vw,12px)}
+  .joincard .qr{width:100%;height:100%}
   .joincard .qr svg{width:100%;height:100%;display:block}
-  .joincard .how{margin:10px 0 2px;font-size:clamp(16px,1.6vw,22px);font-weight:700}
-  .joincard .code{margin:4px 0;font-size:clamp(15px,1.4vw,19px);color:#5b5266}
-  .joincard .code b{display:block;font-size:clamp(44px,5.6vw,84px);font-weight:900;letter-spacing:.18em;color:#1c1526;line-height:1.1;font-variant-numeric:tabular-nums}
-  .joincard .url{margin:2px 0 0;font-size:clamp(12px,1.05vw,15px);color:#7a7286}
-  .roster{display:flex;flex-direction:column;min-height:0}
-  .roster h2{margin:4px 0 14px;font-size:clamp(22px,2.4vw,34px)}
+  .lobbyside{flex:0 1 620px;min-width:0;height:var(--qr);display:flex;flex-direction:column}
+  .lobbyside .how{margin:0;font-size:clamp(20px,2.1vw,34px);font-weight:900;line-height:1.3}
+  .bigcode{margin:clamp(6px,1.4vh,18px) 0 0;color:var(--muted);font-size:clamp(15px,1.4vw,20px)}
+  .bigcode b{display:block;color:var(--accent);font-size:clamp(72px,9.5vw,170px);font-weight:900;letter-spacing:.12em;line-height:1;font-variant-numeric:tabular-nums;margin-top:4px}
+  .lobbyside .url{margin:clamp(6px,1.2vh,14px) 0 0;color:var(--muted);font-size:clamp(13px,1.1vw,16px);line-height:1.6}
+  .lobbyside .url b{color:var(--text)}
+  .roster{flex:1;min-height:0;display:flex;flex-direction:column;margin-top:clamp(10px,2vh,24px);border-top:1px solid var(--line);padding-top:clamp(10px,1.6vh,18px)}
+  .roster h2{margin:0 0 10px;font-size:clamp(20px,2vw,30px)}
   .roster h2 b{color:var(--accent);font-variant-numeric:tabular-nums}
-  .names{flex:1;min-height:0;overflow:auto;display:flex;flex-wrap:wrap;align-content:flex-start;gap:10px;padding:4px}
-  .nm{border:0;background:var(--panel2);color:var(--text);border-radius:16px;padding:12px 22px;font-size:clamp(22px,2.3vw,34px);font-weight:900;animation:pop .45s cubic-bezier(.3,1.5,.5,1)}
+  .names{flex:1;min-height:0;overflow:auto;display:flex;flex-wrap:wrap;align-content:flex-start;gap:8px;padding:2px}
+  .nm{border:0;background:var(--panel2);color:var(--text);border-radius:14px;padding:8px 18px;font-size:clamp(20px,1.9vw,30px);font-weight:900;animation:pop .45s cubic-bezier(.3,1.5,.5,1)}
   .nm:hover{background:#4a2f3a;text-decoration:line-through}
-  .empty{color:var(--muted);font-size:18px}
-  .roster .tip{color:var(--muted);font-size:14px;margin:10px 0}
-  .roster .actions{display:flex;justify-content:flex-end}
+  .empty{color:var(--muted);font-size:18px;margin:4px 0}
+  .roster .foot{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:10px}
+  .roster .tip{color:var(--muted);font-size:13px;margin:0}
   @keyframes pop{0%{transform:scale(.4);opacity:0}100%{transform:none;opacity:1}}
 
   /* ── 排行榜 ── */
@@ -133,7 +137,9 @@
 
   @media (max-width:860px){
     body{overflow:auto}
-    #vLobby,#vPlay{grid-template-columns:1fr}
+    #vPlay{grid-template-columns:1fr}
+    #vLobby{flex-direction:column;--qr:min(92vw,60vh)}
+    .lobbyside{height:auto;width:100%}
     .row{grid-template-columns:calc(var(--rowH) - 8px) minmax(4em,1fr) 4.6em 4em;}
     .row .bar{display:none}
   }
@@ -156,17 +162,19 @@
     </section>
 
     <section class="view" id="vLobby" hidden>
-      <div class="joincard">
-        <div class="qr" id="qrBig"></div>
+      <div class="joincard"><div class="qr" id="qrBig"></div></div>
+      <div class="lobbyside">
         <p class="how">拿起平板，掃描 QR code 加入</p>
-        <p class="code">房間代碼<b id="codeBig">----</b></p>
+        <p class="bigcode">房間代碼<b id="codeBig">----</b></p>
         <p class="url" id="urlText"></p>
-      </div>
-      <div class="roster">
-        <h2>已加入 <b id="nJoined">0</b> 人</h2>
-        <div class="names" id="names"><p class="empty">還沒有人加入，等學生掃碼…</p></div>
-        <p class="tip">點名字可以把人移出房間（例如名字不恰當）。</p>
-        <div class="actions"><button class="bigbtn" id="btnStart" type="button" disabled>開始遊戲</button></div>
+        <div class="roster">
+          <h2>已加入 <b id="nJoined">0</b> 人</h2>
+          <div class="names" id="names"><p class="empty">還沒有人加入，等學生掃碼…</p></div>
+          <div class="foot">
+            <p class="tip">點名字可以把人移出房間</p>
+            <button class="bigbtn" id="btnStart" type="button" disabled>開始遊戲</button>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -276,7 +284,8 @@ async function main() {
     } catch (e) { svg = ""; }
     $("qrBig").innerHTML = svg; $("qrSmall").innerHTML = svg;
     $("codeBig").textContent = code; $("codeSmall").textContent = code; $("roomCode").textContent = code;
-    $("urlText").textContent = "掃不到：打開 " + new URL("./", location.href).host + new URL("./", location.href).pathname + "，按「加入班級遊戲」輸入代碼";
+    const home = new URL("./", location.href);
+    $("urlText").innerHTML = "掃不到的話：打開 <b>" + esc(home.host + home.pathname) + "</b>，按「加入班級遊戲」輸入代碼";
   }
 
   function ranked() {
