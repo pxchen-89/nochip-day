@@ -390,6 +390,17 @@ const ART_ROOM = `
   </g>
   <g id="g-pillow"><rect x="400" y="478" width="112" height="44" rx="16" fill="#fffdf8"/></g>
 
+  <!-- 吹風機：放在床上，一般款只有馬達、電熱絲和開關 -->
+  <g id="g-dryer">
+    <path d="M598 532 q-30 12 -54 -2" stroke="#555" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <path d="M604 504 l-9 30 h17 l7 -30 z" fill="#c86a8a"/>
+    <rect x="600" y="514" width="9" height="6" rx="1" fill="#ffffff"/>
+    <rect x="590" y="478" width="58" height="28" rx="14" fill="#e07a9a"/>
+    <rect x="645" y="484" width="16" height="16" rx="3" fill="#b85a78"/>
+    <circle cx="598" cy="492" r="9" fill="#f3b6c8"/>
+    <path d="M594 488 h8 M594 492 h8 M594 496 h8" stroke="#c86a8a" stroke-width="1.5"/>
+  </g>
+
   <g id="g-nstand">
     <rect x="870" y="507" width="117" height="143" rx="8" fill="#8a6a52"/>
     <rect x="884" y="523" width="89" height="40" rx="4" fill="#9d7c62"/>
@@ -440,6 +451,25 @@ const ART_ROOM = `
     <ellipse cx="700" cy="772" rx="160" ry="38" fill="none" stroke="#e8977c" stroke-width="6"/>
   </g>
 
+  <!-- 電子體重計：0.32 m 見方，放在門邊地上 -->
+  <g id="g-scale">
+    <path d="M112 712 L124 688 H200 L212 712 Z" fill="#f4f6f8"/>
+    <rect x="112" y="712" width="100" height="9" rx="3" fill="#c3cad0"/>
+    <rect x="147" y="694" width="30" height="11" rx="2" fill="#1f2a33"/>
+    <text x="162" y="703" fill="#6fe3a8" font-size="9" font-weight="700" text-anchor="middle" font-family="'Noto Sans TC',sans-serif">0.0</text>
+    <g fill="#d6dce1"><path d="M128 709 l6 -13 h11 l-4 13 z"/><path d="M196 709 l-6 -13 h-11 l4 13 z"/></g>
+  </g>
+
+  <!-- 延長線：0.35 m，電風扇插在上面 -->
+  <g id="g-strip">
+    <path d="M1420 650 q-6 26 -60 34 q-60 8 -96 8" stroke="#3a3a3a" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <path d="M1196 698 q-34 -2 -40 -26 q-4 -16 4 -30" stroke="#3a3a3a" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <rect x="1196" y="688" width="106" height="20" rx="6" fill="#f4f4f0"/>
+    <g fill="#3d4651"><rect x="1208" y="693" width="10" height="9" rx="2"/><rect x="1228" y="693" width="10" height="9" rx="2"/></g>
+    <rect x="1250" y="688" width="14" height="14" rx="3" fill="#3a3a3a"/>
+    <rect x="1278" y="692" width="14" height="11" rx="2" fill="#e5483f"/>
+  </g>
+
   ${ruler(1160, 866, 260, "1 公尺")}
 </svg>`;
 
@@ -466,15 +496,29 @@ const ART_STREET = `
   <rect width="1600" height="900" fill="url(#s-sky)"/>
 
   <!-- 遠景公寓 -->
-  <rect x="560" y="40" width="300" height="480" fill="#4f6f86"/>
-  ${ironWin(590,80,100,80)}${ironWin(740,80,100,80)}
-  ${ironWin(590,200,100,80)}${ironWin(740,200,100,80)}
-  ${ironWin(590,320,100,80)}${ironWin(740,320,100,80)}
-  ${acUnit(694,122)}${acUnit(694,242)}
+  <g id="g-apt">
+    <rect x="560" y="40" width="300" height="480" fill="#4f6f86"/>
+    ${ironWin(590,80,100,80)}${ironWin(740,80,100,80)}
+    ${ironWin(590,200,100,80)}${ironWin(740,200,100,80)}
+    ${ironWin(590,320,100,80)}${ironWin(740,320,100,80)}
+    ${acUnit(694,122)}${acUnit(694,242)}
+  </g>
   <rect x="1000" y="0" width="320" height="520" fill="#46667d"/>
   ${ironWin(1030,30,110,84)}${ironWin(1180,30,110,84)}${ironWin(1030,150,110,84)}${ironWin(1180,150,110,84)}
   <rect x="1340" y="70" width="260" height="450" fill="#557790"/>
   ${ironWin(1370,100,90,76)}${ironWin(1490,100,90,76)}
+
+  <!-- 電線桿上的變壓器：只有線圈和鐵芯，沒有晶片 -->
+  <g id="g-pole">
+    <path d="M0 34 Q660 72 1325 40 Q1462 30 1600 46 M0 56 Q660 94 1325 62 Q1462 54 1600 68" stroke="#2b333c" stroke-width="3" fill="none"/>
+    <rect x="1316" y="0" width="18" height="200" fill="#9a968e"/>
+    <rect x="1288" y="38" width="74" height="9" fill="#5a646e"/>
+    <path d="M1270 70 v-12 M1288 70 v-14 M1306 70 v-12" stroke="#5a646e" stroke-width="4"/>
+    <rect x="1262" y="70" width="52" height="80" rx="10" fill="#a3aab0"/>
+    <rect x="1262" y="70" width="52" height="13" rx="6" fill="#c3c9cd"/>
+    <path d="M1268 94 h40 M1268 106 h40 M1268 118 h40 M1268 130 h40" stroke="#7d848a" stroke-width="2"/>
+    <rect x="1312" y="96" width="8" height="10" fill="#5a646e"/>
+  </g>
 
   <!-- 超商：招牌、店內（提款機在店裡，隔著玻璃看得到）、自動門 -->
   <rect x="0" y="10" width="560" height="510" fill="#ece6d8"/>
@@ -486,15 +530,17 @@ const ART_STREET = `
     <text x="493" y="77" fill="#2f8f6b" font-size="30" font-weight="900" text-anchor="middle" font-family="'Noto Sans TC',sans-serif">24H</text>
   </g>
   <rect x="20" y="130" width="242" height="390" fill="#f6efe0"/>
-  <rect x="200" y="300" width="56" height="220" fill="#b9b2a2"/>
-  <rect x="200" y="356" width="56" height="6" fill="#8e887c"/><rect x="200" y="418" width="56" height="6" fill="#8e887c"/><rect x="200" y="480" width="56" height="6" fill="#8e887c"/>
-  <g fill="#e2725b"><rect x="206" y="330" width="14" height="24"/><rect x="228" y="330" width="14" height="24"/></g>
-  <g fill="#5fa8d3"><rect x="206" y="392" width="14" height="24"/><rect x="232" y="392" width="14" height="24"/></g>
-  <g fill="#f2c14e"><rect x="210" y="454" width="14" height="24"/><rect x="232" y="454" width="14" height="24"/></g>
   <g id="g-storewin">
     <rect x="20" y="130" width="242" height="390" fill="url(#s-glass)"/>
     <rect x="20" y="130" width="242" height="390" fill="none" stroke="#6b7178" stroke-width="8"/>
     <path d="M34 146 h70 l-52 96 z" fill="#ffffff" opacity=".22"/>
+  </g>
+  <g id="g-shelf">
+    <rect x="200" y="300" width="56" height="220" fill="#b9b2a2"/>
+    <rect x="200" y="356" width="56" height="6" fill="#8e887c"/><rect x="200" y="418" width="56" height="6" fill="#8e887c"/><rect x="200" y="480" width="56" height="6" fill="#8e887c"/>
+    <g fill="#e2725b"><rect x="206" y="330" width="14" height="24"/><rect x="228" y="330" width="14" height="24"/></g>
+    <g fill="#5fa8d3"><rect x="206" y="392" width="14" height="24"/><rect x="232" y="392" width="14" height="24"/></g>
+    <g fill="#f2c14e"><rect x="210" y="454" width="14" height="24"/><rect x="232" y="454" width="14" height="24"/></g>
   </g>
   <g id="g-atm">
     <rect x="70" y="280" width="120" height="240" rx="8" fill="#c9ccc6"/>
@@ -587,6 +633,26 @@ const ART_STREET = `
     <path d="M436 640 h62 l-8 40 h-46 z" fill="none" stroke="#2f3a44" stroke-width="6"/>
   </g>
 
+  <!-- YouBike 2.0：白色車身、黃色擋泥板，車頭的車機有螢幕、感應悠遊卡 -->
+  <g id="g-ubike">
+    <g fill="none" stroke="#2f3a44" stroke-width="12"><circle cx="820" cy="811" r="66"/><circle cx="1052" cy="811" r="66"/></g>
+    <g fill="none" stroke="#f2b705" stroke-width="10" stroke-linecap="round">
+      <path d="M752 806 a70 70 0 0 1 120 -48"/><path d="M1000 760 a70 70 0 0 1 118 40"/>
+    </g>
+    <path d="M820 811 L905 812 L1010 682" stroke="#f4f4f0" stroke-width="17" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M820 811 L882 702 M905 812 L882 702" stroke="#f4f4f0" stroke-width="14" fill="none" stroke-linecap="round"/>
+    <path d="M1010 682 L1052 811" stroke="#b9bdb6" stroke-width="10" stroke-linecap="round"/>
+    <circle cx="905" cy="812" r="14" fill="#9aa1a6"/>
+    <rect x="852" y="686" width="62" height="16" rx="8" fill="#2f3a44"/>
+    <path d="M1006 680 L1000 642 h42" stroke="#2f3a44" stroke-width="9" fill="none" stroke-linecap="round"/>
+    <path d="M1018 700 h72 l-7 32 h-58 z" fill="none" stroke="#9aa1a6" stroke-width="4"/>
+    <rect x="1016" y="650" width="78" height="48" rx="9" fill="#f2b705"/>
+    <rect x="1026" y="658" width="36" height="22" rx="3" fill="#1f3550"/>
+    <rect x="1030" y="663" width="20" height="5" fill="#6fe3a8"/>
+    <circle cx="1078" cy="668" r="7" fill="#41b37c"/>
+    <text x="1055" y="694" fill="#3a2a00" font-size="11" font-weight="900" text-anchor="middle" font-family="'Noto Sans TC',sans-serif">YouBike</text>
+  </g>
+
   <!-- 停車再開標誌：紅色八角形、白邊、「停」 -->
   <g id="g-sign">
     <rect x="612" y="596" width="16" height="278" fill="#8a8f96"/>
@@ -609,6 +675,8 @@ const ART_STREET = `
     <g fill="#ffb53a" font-size="16" font-weight="700" font-family="'Noto Sans TC',sans-serif">
       <text x="1191" y="352">262　約3分</text><text x="1191" y="376">299　將到站</text><text x="1191" y="400">670　約15分</text>
     </g>
+  </g>
+  <g id="g-routes">
     <rect x="1187" y="428" width="106" height="124" rx="3" fill="#f2f2ee"/>
     <g font-size="15" font-weight="700" fill="#333" font-family="'Noto Sans TC',sans-serif">
       <rect x="1193" y="436" width="20" height="16" fill="#d9554f"/><text x="1219" y="449">262</text>
@@ -618,7 +686,7 @@ const ART_STREET = `
     </g>
   </g>
 
-  ${ruler(830, 878, 210, "1 公尺")}
+  ${ruler(1330, 894, 210, "1 公尺")}
 </svg>`;
 
 /* ── 場景 3：教室　upm 200（牆高 3 m，地面 y=700）／前景課桌 230（地面 y=900）── */
@@ -768,6 +836,16 @@ const ART_CLASS = `
     <circle cx="268" cy="495" r="4" fill="#6fbf8f"/>
   </g>
 
+  <!-- 電動削鉛筆機：插著電、鉛筆插進去就會轉，但只是壓到開關 -->
+  <g id="g-sharp">
+    <rect x="300" y="502" width="44" height="38" rx="7" fill="#5f9fd6"/>
+    <rect x="300" y="502" width="44" height="10" rx="5" fill="#8cc0ea"/>
+    <rect x="304" y="528" width="28" height="8" rx="2" fill="#3f6f9f"/>
+    <circle cx="336" cy="521" r="6" fill="#2f4a66"/>
+    <path d="M338 517 L392 517 L392 525 L338 525 Z" fill="#f2c14e"/>
+    <rect x="392" y="517" width="9" height="8" rx="1" fill="#e8869a"/>
+  </g>
+
   <g id="g-desks">
     <g>
       <rect x="120" y="739" width="138" height="14" rx="5" fill="#c08a4e"/>
@@ -838,6 +916,28 @@ const ART_HOME = `
     <rect x="266" y="432" width="44" height="22" rx="4" fill="#2f3640"/>
     <rect x="271" y="437" width="20" height="8" rx="1" fill="#6fe3a8"/>
     <circle cx="301" cy="448" r="3" fill="#ffb35c"/><circle cx="301" cy="439" r="3" fill="#9aa1a6"/>
+  </g>
+
+  <!-- 大同電鍋：直徑 0.3 m，開關下面是感溫磁鐵，沒有晶片 -->
+  <g id="g-tatung">
+    <rect x="330" y="430" width="10" height="7" rx="3" fill="#3d4651"/><rect x="404" y="430" width="10" height="7" rx="3" fill="#3d4651"/>
+    <rect x="338" y="420" width="68" height="46" rx="10" fill="#5aa88a"/>
+    <path d="M340 422 q32 -24 64 0 z" fill="#7cc4a6"/>
+    <rect x="366" y="399" width="12" height="8" rx="3" fill="#2f3a3a"/>
+    <rect x="360" y="434" width="24" height="11" rx="2" fill="#f4f4f0"/>
+    <rect x="366" y="450" width="12" height="11" rx="2" fill="#2f3a44"/>
+    <rect x="340" y="461" width="64" height="5" fill="#468f73"/>
+  </g>
+
+  <!-- 一般快煮壺：水滾了蒸氣讓雙金屬片彎掉，把電切斷 -->
+  <g id="g-kettle">
+    <path d="M232 422 q18 4 13 28 h-9" stroke="#2f3640" stroke-width="6" fill="none" stroke-linejoin="round"/>
+    <path d="M194 426 l-12 -7" stroke="#c9cfd4" stroke-width="7" stroke-linecap="round"/>
+    <path d="M190 466 L194 416 Q211 404 228 416 L232 466 Z" fill="#c9cfd4"/>
+    <path d="M200 420 v40" stroke="#e8ecef" stroke-width="5" stroke-linecap="round"/>
+    <rect x="200" y="408" width="22" height="6" rx="3" fill="#2f3640"/>
+    <rect x="186" y="460" width="50" height="6" rx="2" fill="#2f3640"/>
+    <rect x="236" y="444" width="9" height="5" rx="1" fill="#ffb35c"/>
   </g>
 
   <g id="g-hwin">
@@ -922,6 +1022,16 @@ const ART_HOME = `
     <rect x="854" y="740" width="46" height="160" rx="16" fill="#7d5261"/>
   </g>
 
+  <!-- 電視遙控器：放在沙發上，0.2 m -->
+  <g id="g-remote">
+    <g transform="rotate(-16 566 792)">
+      <rect x="539" y="784" width="56" height="17" rx="6" fill="#2b2f36"/>
+      <circle cx="587" cy="792.5" r="3.6" fill="#e5483f"/>
+      <g fill="#9aa1a6"><circle cx="549" cy="789" r="2"/><circle cx="556" cy="789" r="2"/><circle cx="563" cy="789" r="2"/><circle cx="549" cy="796" r="2"/><circle cx="556" cy="796" r="2"/><circle cx="563" cy="796" r="2"/></g>
+      <rect x="570" y="787" width="8" height="11" rx="2" fill="#5f9fd6"/>
+    </g>
+  </g>
+
   ${ruler(60, 866, 250, "1 公尺")}
 </svg>`;
 
@@ -940,6 +1050,9 @@ const SCENES = [
       {e:"🔊", n:"藍牙喇叭", chip:1, zone:[1108,378,92,82], gid:"g-btspk", say:"沒有了晶片，藍牙喇叭收不到手機傳過來的音樂，音樂也就播不出來，房間安靜得像半夜。"},
       {e:"❄️", n:"冷氣",     chip:1, zone:[400,26,234,140],  gid:"g-ac",  say:"沒有了晶片，冷氣沒辦法判斷房間有多熱、該吹多冷，整台停下來，房間悶得像蒸籠。"},
       {e:"🌀", n:"電風扇",   chip:1, zone:[1362,338,116,312], gid:"g-fan", say:"沒有了晶片，遙控電風扇聽不懂遙控器送來的指令，你怎麼按它都不會轉。"},
+      {e:"⚖️", n:"電子體重計", chip:1, zone:[100,676,124,52], gid:"g-scale", say:"沒有了晶片，體重計沒辦法把你踩上去的力量算成數字，螢幕一片黑，量不出你有多重。"},
+      {e:"🔌", n:"延長線",   chip:0, zone:[1180,672,136,44], gid:"g-strip", say:"延長線雖然插著電，但它只是把牆壁的電送到插頭，開關按下去就通、再按就斷，它不用判斷，所以沒有晶片。"},
+      {e:"🌬️", n:"吹風機",   chip:0, zone:[580,468,90,72],  gid:"g-dryer", say:"一般的吹風機裡面只有馬達、電熱絲和開關。你按下開關它就吹熱風，它不用判斷，所以沒有晶片。"},
       {e:"🛏️", n:"床",       chip:0, zone:[360,416,494,234], gid:"g-bed",    say:"床不用判斷任何事，你躺上去它就撐住你。"},
       {e:"☁️", n:"枕頭",     chip:0, zone:[396,474,120,52],  gid:"g-pillow", say:"枕頭裡面是棉花，沒有電，也沒有開關。"},
       {e:"🚪", n:"房間門",   chip:0, zone:[70,130,234,520],  gid:"g-door",   say:"門靠的是門把和鉸鏈，你推它，它才開。"},
@@ -963,12 +1076,17 @@ const SCENES = [
       {e:"🚗", n:"汽車",       chip:1, zone:[60,446,765,306],   gid:"g-car",   say:"沒有了晶片，汽車的電腦沒辦法控制引擎什麼時候噴油、什麼時候點火，車子發不動，爸爸沒辦法載你上學。"},
       {e:"🏧", n:"提款機",     chip:1, zone:[58,258,144,266],   gid:"g-atm",   say:"沒有了晶片，提款機沒辦法確認提款卡和密碼對不對，也算不出要給多少錢，大家都領不到錢。"},
       {e:"🚪", n:"超商自動門", chip:1, zone:[286,130,248,316],  gid:"g-door",  say:"沒有了晶片，自動門沒辦法判斷有沒有人走過來，門一直關著，大家只能站在門口等。"},
-      {e:"🚏", n:"電子站牌",   chip:1, zone:[1172,246,136,310], gid:"g-stop",  say:"沒有了晶片，電子站牌收不到公車現在開到哪裡的資料，到站時間全部消失，沒人知道下一班車什麼時候來。"},
+      {e:"🚏", n:"電子站牌",   chip:1, zone:[1172,246,136,178], gid:"g-stop",  say:"沒有了晶片，電子站牌收不到公車現在開到哪裡的資料，到站時間全部消失，沒人知道下一班車什麼時候來。"},
+      {e:"🚲", n:"YouBike", chip:1, zone:[750,636,378,250], gid:"g-ubike", say:"沒有了晶片，YouBike 車頭的車機讀不到你的悠遊卡，沒辦法開鎖，也沒辦法算你騎了多久，這台車借不出來。旁邊那台自己的腳踏車沒有晶片，照樣能騎。"},
       {e:"🚲", n:"腳踏車",     chip:0, zone:[106,590,406,300],  gid:"g-bike",  say:"腳踏車靠你的腳，不靠電，也不用判斷。"},
+      {e:"⚡", n:"電線桿的變壓器", chip:0, zone:[1256,0,108,190], gid:"g-pole", say:"變壓器裡面只有一圈一圈的銅線和鐵芯，負責把電線裡的高電壓變低，再送進家裡。它從頭到尾都在做同一件事，不用判斷，所以沒有晶片。"},
+      {e:"🗒️", n:"站牌的路線表", chip:0, zone:[1180,424,120,132], gid:"g-routes", say:"站牌下面的路線表是印好貼上去的，公車改路線要有人來換。上面會跳到站時間的螢幕才有晶片。"},
+      {e:"🛒", n:"超商的貨架", chip:0, zone:[196,296,64,226], gid:"g-shelf", say:"貨架只是幾片鐵板，用來放東西，它不知道上面放了什麼。"},
+      {e:"🏢", n:"公寓的鐵窗", chip:0, zone:[560,40,300,400], gid:"g-apt", say:"鐵窗只是一根一根的鐵條，用來保護窗戶，它不用判斷，也沒有晶片。"},
       {e:"🛑", n:"停車標誌",   chip:0, zone:[526,414,188,188],  gid:"g-sign",  say:"標誌只是一塊鐵牌，上面的字不會自己變。"},
       {e:"🏪", n:"超商招牌",   chip:0, zone:[0,10,560,120],     gid:"g-signboard", say:"招牌是做好掛上去的，它不會自己換字。"},
       {e:"🪟", n:"超商玻璃窗", chip:0, zone:[16,126,250,398],   gid:"g-storewin",  say:"玻璃只是透明的，裡面有沒有人它都一樣。"},
-      {e:"☂️", n:"雨傘",       chip:0, at:[1430,736], m:.9, say:"雨傘靠的是骨架和布，撐開就能擋雨。"}
+      {e:"☂️", n:"雨傘",       chip:0, at:[1440,712], m:.9, say:"雨傘靠的是骨架和布，撐開就能擋雨。"}
     ]
   },
   {
@@ -982,6 +1100,8 @@ const SCENES = [
       {e:"❄️", n:"教室冷氣", chip:1, zone:[160,160,180,96],  gid:"g-cac",     say:"沒有了晶片，教室冷氣沒辦法判斷教室有多熱、該怎麼吹，整台停下來，全班熱到趴在桌上。"},
       {e:"📢", n:"廣播喇叭", chip:0, zone:[1276,104,124,84], gid:"g-speaker", say:"喇叭本身沒有晶片，它只是把送過來的聲音放出來，自己不會決定要不要響。"},
       {e:"💨", n:"吊扇",     chip:0, zone:[1002,92,316,152], gid:"g-cfan",    say:"教室的吊扇是用牆上的旋鈕開關調快慢，裡面沒有晶片，所以它還在轉。"},
+      {e:"🎤", n:"無線麥克風", chip:1, at:[1236,512], m:.18, say:"沒有了晶片，無線麥克風沒辦法把老師的聲音變成訊號送到喇叭，老師說話全班都聽不到。"},
+      {e:"✏️", n:"電動削鉛筆機", chip:0, zone:[292,494,114,50], gid:"g-sharp", say:"電動削鉛筆機插著電，鉛筆一插進去就會轉，但那只是鉛筆壓到裡面的開關、接通了馬達。它沒有在判斷，所以沒有晶片。"},
       {e:"🟩", n:"黑板",     chip:0, zone:[390,262,820,276], gid:"g-board",   say:"黑板只是一塊塗了漆的板子，字是老師自己寫上去的。"},
       {e:"⬜", n:"投影布幕", chip:0, zone:[620,150,400,346], gid:"g-screen",  say:"布幕就是一塊白布。畫面是投影機送過來的，布本身不會想。"},
       {e:"📋", n:"布告欄",   chip:0, zone:[60,262,280,180],  gid:"g-notice",  say:"布告欄上的紙不會自己換，要人去貼。"},
@@ -1005,8 +1125,11 @@ const SCENES = [
       {e:"📺", n:"電視",       chip:1, zone:[1022,413,280,164],gid:"g-tv",     say:"沒有了晶片，電視沒辦法把收到的訊號變成畫面和聲音，打開也是一片黑。"},
       {e:"🧺", n:"洗衣機",     chip:1, zone:[1366,432,145,248],gid:"g-washer", say:"沒有了晶片，洗衣機沒辦法決定什麼時候進水、轉多久、什麼時候脫水，制服洗到一半就停住，明天你只能穿睡衣上學。"},
       {e:"🤖", n:"掃地機器人", chip:1, zone:[1120,740,120,62],  gid:"g-robot",  say:"沒有了晶片，掃地機器人沒辦法判斷哪裡有牆、哪裡掃過了，停在客廳正中間，連充電座都找不到。"},
-      {e:"🍚", n:"電子鍋",     chip:1, zone:[244,368,90,102],  gid:"g-cooker", say:"沒有了晶片，電子鍋沒辦法控制加熱多久、多熱，飯煮到一半就停了，中間還是生的。（會跳起來的傳統電鍋沒有晶片，它還能煮。）"},
+      {e:"🍚", n:"電子鍋",     chip:1, zone:[244,368,90,102],  gid:"g-cooker", say:"沒有了晶片，電子鍋沒辦法控制加熱多久、多熱，飯煮到一半就停了，中間還是生的。"},
       {e:"🎮", n:"遊戲機",     chip:1, at:[1240,535], m:.3, say:"沒有了晶片，遊戲機沒辦法算出遊戲畫面，也讀不到你按了哪個按鈕，今天沒得玩。"},
+      {e:"🎛️", n:"電視遙控器", chip:1, zone:[526,760,80,56], gid:"g-remote", say:"沒有了晶片，遙控器沒辦法把你按的按鈕變成看不見的紅外線訊號，你怎麼按，電視都沒反應。"},
+      {e:"🍲", n:"大同電鍋",   chip:0, zone:[326,392,92,78], gid:"g-tatung", say:"大同電鍋插著電，飯煮好還會自己跳起來，但它沒有晶片。開關下面有一塊磁鐵，旁邊的材料溫度一高就失去磁性，鍋底的水燒乾、溫度升高，磁鐵吸不住，開關就自己彈起來。"},
+      {e:"🫖", n:"快煮壺",     chip:0, zone:[176,398,70,72], gid:"g-kettle", say:"一般的快煮壺水開了會自己跳掉，但它沒有晶片。開關旁邊有一片遇熱會彎的金屬片，水滾了冒出蒸氣，把金屬片吹熱、彎掉，就把電切斷了。"},
       {e:"🚪", n:"房間門",     chip:0, zone:[730,224,205,456], gid:"g-hdoor",   say:"門靠的是門把和鉸鏈，推了就開。"},
       {e:"🛋️", n:"沙發",       chip:0, zone:[400,688,500,212], gid:"g-sofa",    say:"沙發只負責軟，它不用知道誰坐上來。"},
       {e:"🗄️", n:"電視櫃",     chip:0, zone:[980,577,365,103], gid:"g-tvstand", say:"櫃子撐住電視就好，電視壞了它也不知道。"},
@@ -1015,7 +1138,7 @@ const SCENES = [
       {e:"💧", n:"水龍頭",     chip:0, zone:[64,386,110,86],   gid:"g-tap",     say:"水龍頭靠你轉開它，它不會自己決定要不要出水。"},
       {e:"🗃️", n:"廚房上櫃",   chip:0, zone:[0,180,430,150],   gid:"g-upper",   say:"櫃子只是幾塊木板，門要你自己開。"},
       {e:"🧦", n:"襪子",       chip:0, at:[1010,800], m:.25, say:"襪子不需要判斷任何事，穿上就暖。"},
-      {e:"🥢", n:"筷子",       chip:0, at:[400,440], m:.17, say:"筷子靠的是你的手指，不是電。"}
+      {e:"🥢", n:"筷子",       chip:0, at:[446,446], m:.17, say:"筷子靠的是你的手指，不是電。"}
     ]
   }
 ];
@@ -1024,13 +1147,14 @@ const $ = s => document.querySelector(s);
 const board = $("#board"), nav = $("#nav"), banner = $("#banner"), msg = $("#msg"), downbar = $("#downbar");
 let cur = 0;
 let state = SCENES.map(s => s.items.map(() => 0));   // 0=沒點 1=找到晶片 2=檢查過沒晶片
+let bonus = SCENES.map(s => s.items.map(() => 0));    // 每樣晶片找到時拿到的速度加分
 let firstTryOK = 0, firstTryTotal = 0;               // 統計：第一次點就點到有晶片的比例
 
 const ROOM = (new URLSearchParams(location.search).get("room") || "").replace(/\D/g, "").slice(0, 4);
 const SAVE_KEY = "nochip-day-v1" + (ROOM.length === 4 ? "-room" + ROOM : "");
 if(/[?&#]teacher/.test(location.search + location.hash)) document.body.classList.add("teacher");
 function save(){
-  try{ localStorage.setItem(SAVE_KEY, JSON.stringify({state, cur, firstTryOK, firstTryTotal})); }catch(e){}
+  try{ localStorage.setItem(SAVE_KEY, JSON.stringify({state, bonus, cur, firstTryOK, firstTryTotal})); }catch(e){}
 }
 function load(){
   try{
@@ -1039,15 +1163,21 @@ function load(){
       d.state.every((a,i) => Array.isArray(a) && a.length === SCENES[i].items.length);
     if(!ok) return;
     state = d.state;
+    const bOk = Array.isArray(d.bonus) && d.bonus.length === SCENES.length && d.bonus.every((a,i) => Array.isArray(a) && a.length === SCENES[i].items.length);
+    bonus = bOk ? d.bonus : SCENES.map(s => s.items.map(() => 0));
     cur = Math.min(Math.max(d.cur | 0, 0), SCENES.length - 1);
     firstTryOK = d.firstTryOK | 0; firstTryTotal = d.firstTryTotal | 0;
   }catch(e){}
 }
 
+const PTS_RIGHT = 100, PTS_WRONG = 100;   // 答對 +100、點錯 −100；速度加分另計（最多 +50，見 mp-student.js）
 function scoreInfo(){
-  let found = 0, wrong = 0;
-  state.forEach(arr => arr.forEach(v => { if(v === 1) found++; else if(v === 2) wrong++; }));
-  return { found, wrong, score: Math.max(0, found * 100 - wrong * 30) };
+  let found = 0, wrong = 0, fast = 0;
+  state.forEach((arr,i) => arr.forEach((v,k) => {
+    if(v === 1){ found++; fast += bonus[i][k] || 0; }
+    else if(v === 2) wrong++;
+  }));
+  return { found, wrong, score: Math.max(0, found * PTS_RIGHT + fast - wrong * PTS_WRONG) };
 }
 // 給班級競賽模式（mp-student.js）用的接口
 window.mpGame = { scoreInfo, reset: () => reset(), room: ROOM };
@@ -1133,6 +1263,7 @@ function tap(el,k,stage){
   if(it.chip){
     firstTryOK++;
     state[cur][k] = 1;
+    bonus[cur][k] = window.mpSpeedBonus ? window.mpSpeedBonus() : 0;
     el.classList.add("pop");
     setTimeout(() => el.classList.add("settled","dead"), 180);
     markBroken(stage,it,true);
@@ -1145,7 +1276,7 @@ function tap(el,k,stage){
   el.blur();
   showMsg(it);
   save();
-  if(window.mpOnTap) window.mpOnTap(it);
+  if(window.mpOnTap) window.mpOnTap(it, it.chip ? bonus[cur][k] : 0);
   setTimeout(() => { updateProgress(); updateDownbar(); }, 60);
   buildNav();
 }
@@ -1243,6 +1374,7 @@ $("#btnJoin").onclick = () => {
 };
 function reset(){
   state = SCENES.map(s => s.items.map(() => 0));
+  bonus = SCENES.map(s => s.items.map(() => 0));
   firstTryOK = 0; firstTryTotal = 0;
   cur = 0; render(); window.scrollTo({top:0,behavior:"smooth"});
 }

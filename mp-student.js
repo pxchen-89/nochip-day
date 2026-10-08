@@ -3,6 +3,8 @@
 import { firebaseConfig } from "./firebase-config.js";
 
 const SDK = "https://www.gstatic.com/firebasejs/10.12.2/";
+// 速度加分：老師按開始那一刻最多 +50，12 分鐘內平均遞減到 0（答對本身 +100，所以答對永遠比快重要）
+const MAX_BONUS = 50, BONUS_WINDOW = 12 * 60 * 1000;
 const game = window.mpGame;
 const ROOM = game && game.room;
 
@@ -66,6 +68,13 @@ async function connect() {
   } catch (e) {}
 
   let joined = false, metaState = meta.state, myName = "";
+  let startedAt = meta.startedAt || 0, offset = 0;
+  D.onValue(D.ref(db, ".info/serverTimeOffset"), snap => { offset = snap.val() || 0; });
+  window.mpSpeedBonus = () => {
+    if (!startedAt) return 0;
+    const left = 1 - (Date.now() + offset - startedAt) / BONUS_WINDOW;
+    return Math.round(MAX_BONUS * Math.max(0, Math.min(1, left)));
+  };
 
   const push = () => {
     if (!joined) return;
@@ -123,6 +132,7 @@ async function connect() {
       card(`<h2>你已經加入了！</h2>
         <p class="mp-name">${escapeHtml(myName)}</p>
         <p>等老師按「開始」就可以玩</p>
+        <p class="mp-rule">找到晶片 <b>+100</b>，越快找到最多再 <b>+50</b><br>點到沒有晶片的 <b>−100</b>，想清楚再點！</p>
         <div class="mp-dots"><i></i><i></i><i></i></div>`);
     }
   };
@@ -141,6 +151,7 @@ async function connect() {
       return;
     }
     metaState = m.state;
+    startedAt = m.startedAt || 0;
     applyState();
   });
 
@@ -153,12 +164,12 @@ async function connect() {
     }
   });
 
-  window.mpOnTap = it => {
+  window.mpOnTap = (it, fast = 0) => {
     push();
     const msg = document.getElementById("msg");
     const b = document.createElement("b");
     b.className = "mp-delta " + (it.chip ? "plus" : "minus");
-    b.textContent = it.chip ? "+100" : "−30";
+    b.textContent = it.chip ? "+" + (100 + fast) : "−100";
     msg.appendChild(b);
   };
 
@@ -198,6 +209,8 @@ function injectStyle() {
   .mp-card p{margin:8px 0;color:rgba(246,241,234,.75);font-size:16px;line-height:1.6}
   .mp-card .mp-room b{color:#ffb35c;font-size:1.4em;letter-spacing:.12em}
   .mp-card .mp-note{color:#ffd166}
+  .mp-card .mp-rule{margin-top:16px;padding:12px;border-radius:14px;background:rgba(255,255,255,.06);font-size:15px}
+  .mp-card .mp-rule b{color:#ffb35c}
   .mp-card .mp-err{color:#ff8f80;min-height:1.4em;margin:6px 0 0}
   .mp-card .mp-name{font-size:28px;font-weight:900;color:#fff}
   .mp-card .mp-big{font-size:64px;font-weight:900;color:#ffb35c;margin:6px 0;font-variant-numeric:tabular-nums}

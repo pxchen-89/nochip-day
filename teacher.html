@@ -187,7 +187,7 @@
       </div>
       <aside class="sidecol">
         <div class="minijoin"><div class="qr" id="qrSmall"></div><p>還沒加入的掃這裡</p><b id="codeSmall">----</b></div>
-        <p class="rule">找到晶片 <b>+100</b><br>點到沒有晶片的 <b>−30</b><br>最低 0 分，同分先到先贏</p>
+        <p class="rule">找到晶片 <b>+100</b><br>越快找到，最多再 <b>+50</b><br>點到沒有晶片的 <b>−100</b><br>最低 0 分，同分先到先贏</p>
         <button class="bigbtn" id="btnEnd" type="button">結束遊戲</button>
       </aside>
     </section>
@@ -207,7 +207,7 @@
 import { firebaseConfig } from "./firebase-config.js";
 
 const SDK = "https://www.gstatic.com/firebasejs/10.12.2/";
-const MAX_FOUND = 22, MAX_SCORE = 2200, TOP = 8;
+const MAX_FOUND = 26, TOP = 8;
 const $ = id => document.getElementById(id);
 const views = ["vSetup", "vLobby", "vPlay", "vEnd"];
 const showView = id => views.forEach(v => $(v).hidden = v !== id);
