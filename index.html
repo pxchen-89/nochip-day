@@ -1170,7 +1170,7 @@ function load(){
   }catch(e){}
 }
 
-const PTS_RIGHT = 100, PTS_WRONG = 100;   // 答對 +100、點錯 −100；速度加分另計（最多 +50，見 mp-student.js）
+const PTS_RIGHT = 100, PTS_WRONG = 30;    // 答對 +100、點錯 −30；速度加分另計（最多 +50，見 mp-student.js）
 function scoreInfo(){
   let found = 0, wrong = 0, fast = 0;
   state.forEach((arr,i) => arr.forEach((v,k) => {

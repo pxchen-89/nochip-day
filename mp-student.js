@@ -132,7 +132,7 @@ async function connect() {
       card(`<h2>你已經加入了！</h2>
         <p class="mp-name">${escapeHtml(myName)}</p>
         <p>等老師按「開始」就可以玩</p>
-        <p class="mp-rule">找到晶片 <b>+100</b>，越快找到最多再 <b>+50</b><br>點到沒有晶片的 <b>−100</b>，想清楚再點！</p>
+        <p class="mp-rule">找到晶片 <b>+100</b>，越快找到最多再 <b>+50</b><br>點到沒有晶片的 <b>−30</b>，想清楚再點！</p>
         <div class="mp-dots"><i></i><i></i><i></i></div>`);
     }
   };
@@ -169,7 +169,7 @@ async function connect() {
     const msg = document.getElementById("msg");
     const b = document.createElement("b");
     b.className = "mp-delta " + (it.chip ? "plus" : "minus");
-    b.textContent = it.chip ? "+" + (100 + fast) : "−100";
+    b.textContent = it.chip ? "+" + (100 + fast) : "−30";
     msg.appendChild(b);
   };
 
